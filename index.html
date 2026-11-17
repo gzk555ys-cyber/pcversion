@@ -265,23 +265,40 @@
 
         <!-- SECTION 4: MEMBERS MANAGEMENT -->
         <section id="sec-members" class="hidden space-y-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
                 <div>
                     <h2 class="text-xl font-bold text-slate-800">部員名簿・ディビジョン管理</h2>
                     <p class="text-xs text-slate-500">カードをクリックすると、その部員の詳細スタッツや直近スコア履歴が閲覧できます</p>
                 </div>
-                <!-- 部員一覧用 学年フィルター -->
-                <div class="flex items-center gap-1.5 bg-white border border-slate-300 rounded-lg px-3 py-1.5 shadow-sm">
-                    <span class="text-xs text-slate-500 font-bold">学年絞り込み:</span>
-                    <select id="members-filter-grade" onchange="window.renderMembersGrid()" class="text-xs bg-transparent font-bold text-emerald-800 focus:outline-none cursor-pointer">
-                        <option value="all">全学年を表示</option>
-                        <option value="1">1年</option>
-                        <option value="2">2年</option>
-                        <option value="3">3年</option>
-                        <option value="4">4年</option>
-                        <option value="OB">OB・OG</option>
-                    </select>
+                <div class="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-2 w-full lg:w-auto">
+                    <!-- ライバル追加ボタンを表示切替タブの左側に配置 -->
+                    <div id="members-rival-actions" class="hidden">
+                        <button type="button" onclick="window.openRivalPicker()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition cursor-pointer">＋ ライバルを追加</button>
+                    </div>
+                    <!-- 表示対象の切り替え -->
+                    <div class="flex bg-slate-200 rounded-lg p-0.5 text-xs font-bold">
+                        <button type="button" id="members-view-all-btn" onclick="window.setMembersView('all')" class="px-3 py-2 rounded-md bg-white text-emerald-800 shadow-sm cursor-pointer">全員</button>
+                        <button type="button" id="members-view-rivals-btn" onclick="window.setMembersView('rivals')" class="px-3 py-2 rounded-md text-slate-600 hover:text-slate-800 cursor-pointer">⚔️ ライバル</button>
+                    </div>
+                    <!-- 部員一覧用 学年フィルター -->
+                    <div class="flex items-center gap-1.5 bg-white border border-slate-300 rounded-lg px-3 py-2 shadow-sm">
+                        <span class="text-xs text-slate-500 font-bold whitespace-nowrap">学年:</span>
+                        <select id="members-filter-grade" onchange="window.renderMembersGrid()" class="text-xs bg-transparent font-bold text-emerald-800 focus:outline-none cursor-pointer">
+                            <option value="all">全学年</option>
+                            <option value="1">1年</option>
+                            <option value="2">2年</option>
+                            <option value="3">3年</option>
+                            <option value="4">4年</option>
+                            <option value="OB">OB・OG</option>
+                        </select>
+                    </div>
                 </div>
+            </div>
+            <p id="members-view-description" class="text-xs text-slate-500">部員全員を表示しています。</p>
+            <div id="members-rivalry-legend" class="hidden flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-bold text-slate-600">
+                <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-red-500"></span>勝ち</span>
+                <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-black"></span>引き分け</span>
+                <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-blue-700"></span>負け</span>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="members-grid">
                 <!-- Member Cards rendered dynamically -->
@@ -740,6 +757,70 @@
                     </div>
                 </div>
 
+                <!-- Rival Head-to-Head Stats: visible only for members registered as this user's rivals -->
+                <div id="detail-rivalry-section" class="hidden space-y-3 border-t border-slate-100 pt-5">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                        <div>
+                            <h4 class="font-bold text-sm text-slate-800">⚔️ ライバル対戦成績</h4>
+                            <p id="detail-rivalry-opponent" class="text-xs text-slate-500 mt-1">あなたとの通算対戦</p>
+                        </div>
+                        <button type="button" id="detail-rival-remove-btn" class="text-xs font-semibold text-rose-600 hover:text-rose-700 border border-rose-200 hover:bg-rose-50 px-3 py-1.5 rounded-lg cursor-pointer">ライバル解除</button>
+                    </div>
+                    <!-- Rival strength comparison: current user vs selected rival -->
+                    <div class="rounded-xl border border-emerald-100 bg-emerald-50/40 p-3 sm:p-4 space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                            <h5 class="text-sm font-bold text-slate-800">⚖️ ライバルとの実力比較</h5>
+                            <span class="text-[10px] sm:text-xs text-slate-500">レート・HDCP：現シーズン ／ その他：通算</span>
+                        </div>
+                        <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+                            <table class="w-full min-w-[360px] text-xs">
+                                <thead class="bg-slate-100 text-slate-600">
+                                    <tr>
+                                        <th class="py-2.5 px-3 text-left font-bold">比較項目</th>
+                                        <th id="detail-comparison-self-name" class="py-2.5 px-3 text-center font-bold">自分</th>
+                                        <th id="detail-comparison-rival-name" class="py-2.5 px-3 text-center font-bold">ライバル</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detail-rival-comparison-tbody" class="divide-y divide-slate-100">
+                                    <tr><td colspan="3" class="py-3 text-center text-slate-400">比較データを読み込み中...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="text-[10px] text-slate-400">レートとHDCPは現シーズンの値、平均スコア・ベストスコア・ラウンド数は全シーズン通算です。各項目で数値が優れている側に「優勢」と表示します。</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <div class="bg-slate-50 p-3 rounded-lg text-center">
+                            <span class="block text-xs text-slate-500 font-bold">対戦数</span>
+                            <span id="detail-rivalry-total" class="block text-2xl font-extrabold text-slate-800">0</span>
+                        </div>
+                        <div class="bg-red-50 p-3 rounded-lg text-center">
+                            <span class="block text-xs text-red-700 font-bold">勝ち</span>
+                            <span id="detail-rivalry-wins" class="block text-2xl font-extrabold text-red-600">0</span>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg text-center">
+                            <span class="block text-xs text-blue-700 font-bold">負け</span>
+                            <span id="detail-rivalry-losses" class="block text-2xl font-extrabold text-blue-700">0</span>
+                        </div>
+                        <div class="bg-slate-100 p-3 rounded-lg text-center">
+                            <span class="block text-xs text-slate-700 font-bold">引分 / 勝率</span>
+                            <span id="detail-rivalry-draws-rate" class="block text-lg font-extrabold text-slate-900 mt-1">0 / --</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <span class="text-sm font-bold text-slate-700">対戦結果の割合</span>
+                            <span class="text-xs text-slate-500">赤：勝ち　黒：引分　青：負け</span>
+                        </div>
+                        <div id="detail-rivalry-outcome-bar"></div>
+                    </div>
+                    <div class="space-y-2">
+                        <h5 class="text-xs font-bold text-slate-700">対戦履歴</h5>
+                        <p class="text-[10px] text-slate-400">同じプレー日に両者のスコアが登録されていれば、ゴルフ場が異なっていても対戦として集計します。勝率は引き分けを0.5勝として計算します。</p>
+                        <div id="detail-rivalry-history-tbody" class="border border-slate-200 rounded-xl overflow-x-hidden overflow-y-auto divide-y divide-slate-100"></div>
+                    </div>
+                </div>
+
                 <!-- Recent Score History Table -->
                 <div class="space-y-2">
                     <h4 class="font-bold text-sm text-slate-800 flex items-center justify-between">
@@ -773,6 +854,32 @@
                 <button type="button" onclick="window.closeModal('modal-member-detail')" class="px-5 py-2 text-xs font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg cursor-pointer">
                     閉じる
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: RIVAL MEMBER PICKER -->
+    <div id="modal-rival-picker" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden">
+            <div class="bg-emerald-900 px-6 py-4 text-white flex justify-between items-center">
+                <h3 class="font-bold text-base">⚔️ ライバル部員を追加</h3>
+                <button type="button" onclick="window.closeModal('modal-rival-picker')" class="text-emerald-200 hover:text-white font-bold cursor-pointer">✖</button>
+            </div>
+            <div class="p-6 space-y-4">
+                <p class="text-xs text-slate-500">追加したライバルは、ログイン中のあなたのアカウントにだけ表示されます。</p>
+                <div class="space-y-2">
+                    <label for="rival-member-search" class="block text-xs font-bold text-slate-700 mb-1">部員を検索</label>
+                    <input type="search" id="rival-member-search" oninput="window.filterRivalCandidates()" placeholder="部員名・学年で検索" autocomplete="off" class="w-full text-sm border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500">
+                    <label for="rival-member-select" class="block text-xs font-bold text-slate-700 mb-1">検索結果から部員を選択</label>
+                    <select id="rival-member-select" size="5" class="w-full text-sm border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500">
+                        <option value="">部員を検索してください</option>
+                    </select>
+                    <p class="text-[11px] text-slate-400">名前や学年を入力すると候補を絞り込めます。</p>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="window.closeModal('modal-rival-picker')" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg cursor-pointer">キャンセル</button>
+                    <button type="button" onclick="window.addRival()" class="px-5 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow cursor-pointer">ライバルに追加</button>
+                </div>
             </div>
         </div>
     </div>
@@ -828,6 +935,8 @@
         let currentUserUid = null;
         let isAdminAuthenticated = false;
         let currentDivFilter = 'all';
+        let membersViewMode = 'all';
+        let rivalCandidateMembers = [];
 
         let chartDistInstance = null;
         let chartGradeHdcpInstance = null;
@@ -1149,6 +1258,7 @@
                 nameDisp.innerText = 'ログイン中';
             }
             renderMyPage();
+            window.renderMembersGrid();
         });
 
         function setupRealtimeListeners() {
@@ -1959,6 +2069,251 @@ Object.keys(statsMap).forEach(id => {
             }).join('');
         };
 
+        // ログイン中の本人の members ドキュメントに保存したライバルID一覧を取得
+        function getCurrentRivalIds() {
+            const currentMember = membersData.find(m => m.id === currentUserUid);
+            return Array.isArray(currentMember?.rivalIds) ? currentMember.rivalIds : [];
+        }
+
+        // 実際の対戦結果を、勝ち・引き分け・負けの3分割バーで表示
+        function buildRivalryOutcomeBar(stats, compact = false) {
+            const total = stats.matches.length;
+            if (!total) {
+                return `<div class="rounded-md bg-slate-100 px-3 py-3 text-center text-xs font-semibold text-slate-400">対戦データがありません</div>`;
+            }
+
+            const yourPct = Number((stats.wins / total * 100).toFixed(1));
+            const drawPct = Number((stats.draws / total * 100).toFixed(1));
+            // 丸め誤差で合計が100.0%からずれないよう、最後の区分で調整
+            const rivalPct = Number((100 - yourPct - drawPct).toFixed(1));
+            const heightClass = compact ? 'h-7' : 'h-9';
+            const fontClass = compact ? 'text-[10px] sm:text-xs' : 'text-xs sm:text-sm';
+            const segment = (pct, label, color, title) => pct <= 0 ? '' : `
+                <div title="${title}: ${pct.toFixed(1)}%" class="flex items-center justify-center ${heightClass} ${fontClass} font-extrabold text-white overflow-hidden"
+                     style="width:${pct}%;background:${color};">
+                    ${pct >= (compact ? 13 : 9) ? `<span class="whitespace-nowrap px-0.5">${pct.toFixed(1)}%</span>` : ''}
+                </div>`;
+            return `
+                <div class="w-full flex overflow-hidden rounded-sm shadow-inner bg-slate-100 ${heightClass}" role="img" aria-label="勝ち ${yourPct}パーセント、引き分け ${drawPct}パーセント、負け ${rivalPct}パーセント">
+                    ${segment(yourPct, '勝ち', '#ef4444', '勝ち')}
+                    ${segment(drawPct, '引き分け', '#111827', '引き分け')}
+                    ${segment(rivalPct, '負け', '#1d4ed8', '負け')}
+                </div>
+                <div class="mt-1.5 grid grid-cols-3 gap-1 ${compact ? 'text-[10px]' : 'text-xs'} font-bold text-slate-600">
+                    <span class="text-red-600 text-left">あなた ${yourPct.toFixed(1)}%</span>
+                    <span class="text-slate-800 text-center">引分 ${drawPct.toFixed(1)}%</span>
+                    <span class="text-blue-700 text-right">相手 ${rivalPct.toFixed(1)}%</span>
+                </div>`;
+        }
+
+        // 同じプレー日のスコアが双方にあれば、ゴルフ場が異なっていても直接対決として比較
+        function getHeadToHeadStats(opponentId) {
+            const result = { matches: [], wins: 0, losses: 0, draws: 0, winRate: null };
+            if (!currentUserUid || !opponentId) return result;
+
+            // コース名では分けず、日付ごとに本人とライバルのスコアをまとめる
+            const buckets = new Map();
+            scoresData.forEach(score => {
+                if (score.memberId !== currentUserUid && score.memberId !== opponentId) return;
+                const dateKey = score.date || '';
+                if (!buckets.has(dateKey)) buckets.set(dateKey, { date: dateKey, mine: [], opponent: [] });
+                const bucket = buckets.get(dateKey);
+                if (score.memberId === currentUserUid) bucket.mine.push(score);
+                else bucket.opponent.push(score);
+            });
+
+            const timestampOf = score => {
+                if (score.createdAt?.toMillis) return score.createdAt.toMillis();
+                if (score.createdAt?.seconds) return score.createdAt.seconds * 1000;
+                return new Date(`${score.date || ''}T00:00:00`).getTime() || 0;
+            };
+
+            buckets.forEach(bucket => {
+                if (bucket.mine.length === 0 || bucket.opponent.length === 0) return;
+                const mineScores = [...bucket.mine].sort((a, b) => timestampOf(a) - timestampOf(b));
+                const opponentScores = [...bucket.opponent].sort((a, b) => timestampOf(a) - timestampOf(b));
+                // 同じ日に複数記録がある場合は、登録時刻順に1件ずつ対応付けて重複計上を防ぐ
+                const pairCount = Math.min(mineScores.length, opponentScores.length);
+                for (let i = 0; i < pairCount; i++) {
+                    const mine = mineScores[i];
+                    const opponent = opponentScores[i];
+                    const mineTotal = Number(mine.totalScore);
+                    const opponentTotal = Number(opponent.totalScore);
+                    if (!Number.isFinite(mineTotal) || !Number.isFinite(opponentTotal)) continue;
+                    const outcome = mineTotal < opponentTotal ? 'W' : mineTotal > opponentTotal ? 'L' : 'D';
+                    const myCourse = mine.course || 'ゴルフ場未登録';
+                    const opponentCourse = opponent.course || 'ゴルフ場未登録';
+                    result.matches.push({
+                        date: bucket.date,
+                        course: myCourse === opponentCourse ? myCourse : `あなた: ${myCourse} / ライバル: ${opponentCourse}`,
+                        myCourse,
+                        opponentCourse,
+                        myScore: mineTotal,
+                        opponentScore: opponentTotal,
+                        outcome,
+                        timestamp: Math.max(timestampOf(mine), timestampOf(opponent))
+                    });
+                }
+            });
+
+            result.matches.sort((a, b) => (b.date || '').localeCompare(a.date || '') || b.timestamp - a.timestamp);
+            result.wins = result.matches.filter(match => match.outcome === 'W').length;
+            result.losses = result.matches.filter(match => match.outcome === 'L').length;
+            result.draws = result.matches.filter(match => match.outcome === 'D').length;
+            if (result.matches.length > 0) {
+                result.winRate = ((result.wins + result.draws * 0.5) / result.matches.length * 100).toFixed(1);
+            }
+            return result;
+        }
+
+        // 自分と選択中のライバルの現在の実力を比較して表示
+        function renderRivalComparison(myMember, rivalMember) {
+            const selfName = document.getElementById('detail-comparison-self-name');
+            const rivalName = document.getElementById('detail-comparison-rival-name');
+            const tbody = document.getElementById('detail-rival-comparison-tbody');
+            selfName.innerText = myMember?.name || '自分';
+            rivalName.innerText = rivalMember?.name || 'ライバル';
+
+            if (!myMember || !rivalMember) {
+                tbody.innerHTML = '<tr><td colspan="3" class="py-3 text-center text-slate-400">比較データを取得できません</td></tr>';
+                return;
+            }
+
+            const getScores = member => Array.isArray(member.allScores) ? member.allScores : [];
+            const getAverage = member => {
+                const scores = getScores(member).map(score => Number(score.totalScore)).filter(Number.isFinite);
+                return scores.length ? scores.reduce((sum, score) => sum + score, 0) / scores.length : null;
+            };
+            const getBest = member => {
+                const scores = getScores(member).map(score => Number(score.totalScore)).filter(Number.isFinite);
+                return scores.length ? Math.min(...scores) : null;
+            };
+            const getHdcp = member => {
+                const value = Number(member.hdcp);
+                return member.hdcp !== undefined && member.hdcp !== null && member.hdcp !== '' && Number.isFinite(value) ? value : null;
+            };
+            const formatHdcp = member => {
+                const raw = String(member.hdcp ?? '');
+                const placement = raw.match(/Placement\s*\((\d+)\/3\)/i);
+                if (placement) return `未確定（${placement[1]}/3）`;
+                const value = getHdcp(member);
+                return value === null ? '--' : value.toFixed(1);
+            };
+            const formatOneDecimal = value => value === null ? '--' : value.toFixed(1);
+            const formatInteger = value => value === null ? '--' : String(Math.round(value));
+
+            const myAverage = getAverage(myMember);
+            const rivalAverage = getAverage(rivalMember);
+            const myBest = getBest(myMember);
+            const rivalBest = getBest(rivalMember);
+            const myHdcp = getHdcp(myMember);
+            const rivalHdcp = getHdcp(rivalMember);
+            const myRate = Number.isFinite(Number(myMember.rating)) ? Number(myMember.rating) : null;
+            const rivalRate = Number.isFinite(Number(rivalMember.rating)) ? Number(rivalMember.rating) : null;
+
+            const rows = [
+                { label: 'レート', mine: formatInteger(myRate), rival: formatInteger(rivalRate), mineValue: myRate, rivalValue: rivalRate, higherIsBetter: true },
+                { label: '平均スコア', mine: formatOneDecimal(myAverage), rival: formatOneDecimal(rivalAverage), mineValue: myAverage, rivalValue: rivalAverage, higherIsBetter: false },
+                { label: 'ベストスコア', mine: formatInteger(myBest), rival: formatInteger(rivalBest), mineValue: myBest, rivalValue: rivalBest, higherIsBetter: false },
+                { label: 'HDCP', mine: formatHdcp(myMember), rival: formatHdcp(rivalMember), mineValue: myHdcp, rivalValue: rivalHdcp, higherIsBetter: false },
+                { label: '通算ラウンド数', mine: String(getScores(myMember).length), rival: String(getScores(rivalMember).length), mineValue: null, rivalValue: null, higherIsBetter: null }
+            ];
+
+            tbody.innerHTML = rows.map(row => {
+                let mineIsBetter = false;
+                let rivalIsBetter = false;
+                if (row.mineValue !== null && row.rivalValue !== null && row.mineValue !== row.rivalValue) {
+                    mineIsBetter = row.higherIsBetter ? row.mineValue > row.rivalValue : row.mineValue < row.rivalValue;
+                    rivalIsBetter = row.higherIsBetter ? row.rivalValue > row.mineValue : row.rivalValue < row.mineValue;
+                }
+                const mineClass = mineIsBetter ? 'bg-emerald-50 text-emerald-800' : 'text-slate-800';
+                const rivalClass = rivalIsBetter ? 'bg-emerald-50 text-emerald-800' : 'text-slate-800';
+                return `
+                    <tr>
+                        <th scope="row" class="py-3 px-3 text-left font-bold text-slate-600 whitespace-nowrap">${row.label}</th>
+                        <td class="py-3 px-2 text-center ${mineClass}">
+                            <div class="font-extrabold text-sm sm:text-base tabular-nums">${row.mine}</div>
+                            ${mineIsBetter ? '<span class="inline-block mt-0.5 text-[9px] font-bold text-emerald-700">優勢</span>' : ''}
+                        </td>
+                        <td class="py-3 px-2 text-center ${rivalClass}">
+                            <div class="font-extrabold text-sm sm:text-base tabular-nums">${row.rival}</div>
+                            ${rivalIsBetter ? '<span class="inline-block mt-0.5 text-[9px] font-bold text-emerald-700">優勢</span>' : ''}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderRivalryDetail(member, myMember) {
+            const section = document.getElementById('detail-rivalry-section');
+            const isRival = currentUserUid && getCurrentRivalIds().includes(member.id);
+            if (!isRival) {
+                section.classList.add('hidden');
+                return;
+            }
+
+            section.classList.remove('hidden');
+            renderRivalComparison(myMember, member);
+            const stats = getHeadToHeadStats(member.id);
+            document.getElementById('detail-rivalry-opponent').innerText = `あなた vs ${member.name}（通算）`;
+            document.getElementById('detail-rivalry-total').innerText = stats.matches.length;
+            document.getElementById('detail-rivalry-wins').innerText = stats.wins;
+            document.getElementById('detail-rivalry-losses').innerText = stats.losses;
+            document.getElementById('detail-rivalry-draws-rate').innerText = `${stats.draws} / ${stats.winRate === null ? '--' : `${stats.winRate}%`}`;
+            document.getElementById('detail-rivalry-outcome-bar').innerHTML = buildRivalryOutcomeBar(stats, false);
+            document.getElementById('detail-rival-remove-btn').onclick = () => window.removeRival(member.id);
+
+            const historyTbody = document.getElementById('detail-rivalry-history-tbody');
+            // 前回表示時の高さ指定をリセットし、直近5戦が最初に収まる表示領域を作る
+            historyTbody.style.height = 'auto';
+            historyTbody.style.maxHeight = '';
+            historyTbody.style.overflowY = 'auto';
+            if (stats.matches.length === 0) {
+                historyTbody.innerHTML = '<div class="py-5 text-center text-sm text-slate-400">同じプレー日の対戦記録はありません</div>';
+            } else {
+                const resultStyles = {
+                    W: 'text-red-700 bg-red-50 border-red-200',
+                    L: 'text-blue-700 bg-blue-50 border-blue-200',
+                    D: 'text-slate-800 bg-slate-100 border-slate-300'
+                };
+                const resultLabels = { W: '勝ち', L: '負け', D: '引き分け' };
+                historyTbody.innerHTML = stats.matches.map(match => `
+                    <article class="px-3 py-3 sm:px-4 hover:bg-slate-50 transition">
+                        <div class="flex flex-nowrap items-center justify-between gap-x-3">
+                            <span class="text-xs sm:text-sm font-semibold text-slate-600 whitespace-nowrap">${match.date}</span>
+                            <span class="text-[10px] sm:text-xs text-slate-400 truncate max-w-[58%] text-right">${match.course}</span>
+                        </div>
+                        <div class="mt-1.5 flex flex-nowrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2 text-sm sm:text-lg font-black text-slate-900 whitespace-nowrap">
+                                <span class="text-red-600">あなた</span>
+                                <span>${match.myScore}</span>
+                                <span class="text-slate-400">-</span>
+                                <span>${match.opponentScore}</span>
+                                <span class="text-blue-700">${member.name}</span>
+                            </div>
+                            <span class="shrink-0 border px-2.5 py-1 rounded-sm text-[10px] sm:text-xs font-extrabold ${resultStyles[match.outcome]}">${resultLabels[match.outcome]}</span>
+                        </div>
+                    </article>
+                `).join('');
+
+                // 一覧の先頭（新しい順）5戦分の高さに合わせる。
+                // 6戦目以降はこの領域内をスクロールして確認できる。
+                const historyRows = Array.from(historyTbody.children);
+                const visibleRows = historyRows.slice(0, 5);
+                const visibleRowsHeight = visibleRows.reduce((total, row) => total + row.getBoundingClientRect().height, 0);
+                if (historyRows.length > 5) {
+                    const viewportHeight = Math.ceil(visibleRowsHeight + 2); // 外枠の上下ボーダー分
+                    historyTbody.style.height = `${viewportHeight}px`;
+                    historyTbody.style.maxHeight = `${viewportHeight}px`;
+                    historyTbody.style.overflowY = 'auto';
+                } else {
+                    historyTbody.style.height = 'auto';
+                    historyTbody.style.maxHeight = 'none';
+                    historyTbody.style.overflowY = 'visible';
+                }
+            }
+        }
+
         window.openMemberDetailModal = (memberId) => {
             const activeSeason = (systemSettings.currentSeason || 1).toString();
             const { processedMembers } = calculateEloAndStats(activeSeason, 'all');
@@ -1995,6 +2350,9 @@ Object.keys(statsMap).forEach(id => {
                 document.getElementById('detail-stat-best').innerText = '--';
             }
 
+            const myMember = processedMembers.find(m => m.id === currentUserUid);
+            renderRivalryDetail(member, myMember);
+
             const tbody = document.getElementById('detail-scores-tbody');
             if (totalCount === 0) {
                 tbody.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-slate-400">提出スコアはありません</td></tr>`;
@@ -2016,8 +2374,131 @@ Object.keys(statsMap).forEach(id => {
             document.getElementById('modal-member-detail').classList.remove('hidden');
         };
 
+        window.setMembersView = (mode) => {
+            membersViewMode = mode === 'rivals' ? 'rivals' : 'all';
+            const allButton = document.getElementById('members-view-all-btn');
+            const rivalsButton = document.getElementById('members-view-rivals-btn');
+            const rivalActions = document.getElementById('members-rival-actions');
+            const rivalLegend = document.getElementById('members-rivalry-legend');
+            const description = document.getElementById('members-view-description');
+
+            if (membersViewMode === 'rivals') {
+                allButton.className = 'px-3 py-2 rounded-md text-slate-600 hover:text-slate-800 cursor-pointer';
+                rivalsButton.className = 'px-3 py-2 rounded-md bg-white text-emerald-800 shadow-sm cursor-pointer';
+                rivalActions.classList.remove('hidden');
+                rivalLegend.classList.remove('hidden');
+                description.innerText = 'あなたが登録したライバルだけを表示します。赤＝勝ち、黒＝引き分け、青＝負け。割合は通算対戦結果の構成比です。';
+            } else {
+                allButton.className = 'px-3 py-2 rounded-md bg-white text-emerald-800 shadow-sm cursor-pointer';
+                rivalsButton.className = 'px-3 py-2 rounded-md text-slate-600 hover:text-slate-800 cursor-pointer';
+                rivalActions.classList.add('hidden');
+                rivalLegend.classList.add('hidden');
+                description.innerText = '部員全員を表示しています。';
+            }
+            window.renderMembersGrid();
+        };
+
+        window.openRivalPicker = () => {
+            if (!currentUserUid) {
+                window.showToast('ライバルを登録するにはログインしてください');
+                window.openLoginModal();
+                return;
+            }
+
+            const rivalIds = new Set(getCurrentRivalIds());
+            rivalCandidateMembers = membersData
+                .filter(member => member.id !== currentUserUid && !rivalIds.has(member.id))
+                .sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'));
+
+            document.getElementById('rival-member-search').value = '';
+            window.filterRivalCandidates();
+            document.getElementById('modal-rival-picker').classList.remove('hidden');
+            document.getElementById('rival-member-search').focus();
+        };
+
+        // ライバル追加候補を名前・学年で絞り込む
+        window.filterRivalCandidates = () => {
+            const searchInput = document.getElementById('rival-member-search');
+            const select = document.getElementById('rival-member-select');
+            if (!searchInput || !select) return;
+
+            const keyword = searchInput.value.trim().toLocaleLowerCase('ja');
+            const filtered = rivalCandidateMembers.filter(member => {
+                const name = (member.name || '').toLocaleLowerCase('ja');
+                const grade = member.grade === 'OB' ? 'ob ob・og' : `${member.grade}年 ${member.grade}`;
+                return name.includes(keyword) || grade.toLocaleLowerCase('ja').includes(keyword);
+            });
+
+            if (rivalCandidateMembers.length === 0) {
+                select.innerHTML = '<option value="">追加できる部員がいません</option>';
+            } else if (filtered.length === 0) {
+                select.innerHTML = '<option value="">該当する部員がいません</option>';
+            } else {
+                select.innerHTML = '<option value="">部員を選択してください</option>' + filtered.map(member =>
+                    `<option value="${member.id}">${member.name}（${member.grade === 'OB' ? 'OB・OG' : `${member.grade}年`}）</option>`
+                ).join('');
+            }
+        };
+
+        window.addRival = async () => {
+            if (!currentUserUid) {
+                window.closeModal('modal-rival-picker');
+                window.openLoginModal();
+                return;
+            }
+            const rivalId = document.getElementById('rival-member-select').value;
+            if (!rivalId) {
+                alert('追加する部員を選択してください。');
+                return;
+            }
+            if (rivalId === currentUserUid) {
+                alert('自分自身はライバルに追加できません。');
+                return;
+            }
+            const rivalIds = getCurrentRivalIds();
+            if (rivalIds.includes(rivalId)) {
+                alert('この部員はすでにライバルに登録されています。');
+                return;
+            }
+            try {
+                await updateDoc(doc(db, 'members', currentUserUid), { rivalIds: [...rivalIds, rivalId] });
+                window.closeModal('modal-rival-picker');
+                window.showToast('ライバルを追加しました');
+                window.renderMembersGrid();
+            } catch (err) {
+                alert('ライバルの追加に失敗しました: ' + err.message);
+            }
+        };
+
+        window.removeRival = async (rivalId) => {
+            if (!currentUserUid) return;
+            const rivalIds = getCurrentRivalIds();
+            if (!rivalIds.includes(rivalId)) return;
+            const rival = membersData.find(member => member.id === rivalId);
+            if (!confirm(`${rival?.name || 'この部員'}をライバルから解除しますか？`)) return;
+            try {
+                await updateDoc(doc(db, 'members', currentUserUid), { rivalIds: rivalIds.filter(id => id !== rivalId) });
+                document.getElementById('modal-member-detail').classList.add('hidden');
+                window.showToast('ライバルを解除しました');
+                window.renderMembersGrid();
+            } catch (err) {
+                alert('ライバルの解除に失敗しました: ' + err.message);
+            }
+        };
+
         window.renderMembersGrid = () => {
             const grid = document.getElementById('members-grid');
+            if (!grid) return;
+
+            if (membersViewMode === 'rivals' && !currentUserUid) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-10 space-y-3">
+                        <p class="text-slate-500 text-sm">ライバル機能を利用するにはログインが必要です。</p>
+                        <button type="button" onclick="window.openLoginModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg cursor-pointer">ログインする</button>
+                    </div>`;
+                return;
+            }
+
             if (membersData.length === 0) {
                 grid.innerHTML = `<p class="col-span-full text-center text-slate-400 py-6">登録部員がいません</p>`;
                 return;
@@ -2027,12 +2508,26 @@ Object.keys(statsMap).forEach(id => {
             const activeSeason = (systemSettings.currentSeason || 1).toString();
             let { processedMembers } = calculateEloAndStats(activeSeason, 'all');
 
+            if (membersViewMode === 'rivals') {
+                const rivalIds = new Set(getCurrentRivalIds());
+                processedMembers = processedMembers.filter(member => rivalIds.has(member.id));
+            }
+
             if (selectedGrade !== 'all') {
                 processedMembers = processedMembers.filter(m => m.grade.toString() === selectedGrade.toString());
             }
 
             if (processedMembers.length === 0) {
-                grid.innerHTML = `<p class="col-span-full text-center text-slate-400 py-6">該当する学年の部員がいません</p>`;
+                if (membersViewMode === 'rivals') {
+                    grid.innerHTML = `
+                        <div class="col-span-full text-center py-10 space-y-3">
+                            <p class="text-slate-500 text-sm">ライバルがまだ登録されていません。</p>
+                            <p class="text-xs text-slate-400">「＋ ライバルを追加」から部員を選択してください。</p>
+                            <button type="button" onclick="window.openRivalPicker()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg cursor-pointer">ライバルを追加</button>
+                        </div>`;
+                } else {
+                    grid.innerHTML = `<p class="col-span-full text-center text-slate-400 py-6">該当する学年の部員がいません</p>`;
+                }
                 return;
             }
 
@@ -2041,12 +2536,32 @@ Object.keys(statsMap).forEach(id => {
                 const divBadge = getDivBadge(m.division);
                 const isImage = m.photoUrl && m.photoUrl.startsWith('http');
                 const avatarHtml = isImage ? `<img src="${m.photoUrl}" class="w-10 h-10 rounded-full object-cover border border-slate-300 shrink-0">` : `<div class="w-10 h-10 bg-emerald-100 text-emerald-800 rounded-full flex items-center justify-center font-bold text-lg shrink-0">${m.photoUrl || '⛳'}</div>`;
+                const rivalryStats = membersViewMode === 'rivals' ? getHeadToHeadStats(m.id) : null;
+                const rivalrySummary = rivalryStats ? `
+                    <div class="mt-3 pt-3 border-t border-slate-100 space-y-2">
+                        <div class="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
+                            <div class="flex items-baseline gap-1.5 min-w-0">
+                                <span class="text-[10px] font-bold text-slate-500">あなた</span>
+                                <span class="text-xl sm:text-2xl font-black tabular-nums text-red-600">${rivalryStats.wins}</span>
+                                <span class="text-xl sm:text-2xl font-black text-slate-400">-</span>
+                                <span class="text-xl sm:text-2xl font-black tabular-nums text-blue-700">${rivalryStats.losses}</span>
+                                <span class="text-[10px] font-bold text-slate-500 truncate">${m.name}</span>
+                            </div>
+                            <div class="text-xs font-bold text-slate-600 whitespace-nowrap">${rivalryStats.matches.length}戦・${rivalryStats.draws}分</div>
+                        </div>
+                        ${buildRivalryOutcomeBar(rivalryStats, true)}
+                        <div class="flex justify-end items-center">
+                            <span class="font-extrabold text-emerald-700 text-base">${rivalryStats.winRate === null ? '--' : `${rivalryStats.winRate}%`}<span class="text-[10px] font-bold ml-1">勝率</span></span>
+                        </div>
+                    </div>` : '';
+                const removeButton = membersViewMode === 'rivals' ? `
+                    <button type="button" onclick="event.stopPropagation(); window.removeRival('${m.id}')" class="shrink-0 text-[10px] font-semibold text-rose-600 hover:bg-rose-50 border border-rose-200 px-2 py-1 rounded-md cursor-pointer">解除</button>` : '';
 
                 return `
-                    <div onclick="window.openMemberDetailModal('${m.id}')" class="glass-card p-4 rounded-xl shadow-sm flex items-center gap-3 cursor-pointer hover:border-emerald-500 hover:shadow-md transition group">
+                    <div onclick="window.openMemberDetailModal('${m.id}')" class="glass-card p-4 rounded-xl shadow-sm flex items-start gap-3 cursor-pointer hover:border-emerald-500 hover:shadow-md transition group">
                         ${avatarHtml}
                         <div class="flex-grow min-w-0">
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 flex-wrap">
                                 <span class="font-bold text-slate-800 group-hover:text-emerald-700 transition truncate">${m.name}</span>
                                 <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded shrink-0">${m.grade}年 (${m.gender})</span>
                                 ${divBadge}
@@ -2056,7 +2571,9 @@ Object.keys(statsMap).forEach(id => {
                                 <span class="text-xs text-slate-500">Rate: <b class="text-emerald-800 font-extrabold text-sm">${m.rating}</b> | HDCP: <b class="text-slate-700 font-bold">${m.hdcp}</b></span>
                             </div>
                             ${m.bio ? `<p class="text-[11px] text-slate-400 mt-1.5 bg-slate-50 p-1.5 rounded italic truncate">"${m.bio}"</p>` : ''}
+                            ${rivalrySummary}
                         </div>
+                        ${removeButton}
                     </div>
                 `;
             }).join('');
