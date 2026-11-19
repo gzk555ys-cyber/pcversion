@@ -1062,7 +1062,7 @@
     <div id="modal-team-match-create" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-3 sm:p-4">
         <div id="team-match-modal-scroll" class="bg-white rounded-2xl shadow-xl max-w-4xl w-full max-h-[94vh] overflow-y-auto overscroll-contain">
             <div class="bg-emerald-900 px-5 py-4 text-white flex justify-between items-center sticky top-0 z-10">
-                <h3 class="font-bold text-base">🏌️ チーム対抗戦を作成</h3>
+                <h3 id="team-match-modal-title" class="font-bold text-base">🏌️ チーム対抗戦を作成</h3>
                 <button type="button" onclick="window.closeModal('modal-team-match-create')" class="text-emerald-200 hover:text-white font-bold">✖</button>
             </div>
             <form id="form-team-match-create" class="p-4 sm:p-6 space-y-4">
@@ -1185,6 +1185,7 @@
         let currentDetailMemberId = null;
         let teamMatchesData = [];
         let teamMatchDraftTeams = [];
+        let editingTeamMatchId = null;
         let teamMatchDraftParticipants = [];
         let monthlyAwardsData = [];
         let monthlyAwardsSnapshotReady = false;
@@ -3756,11 +3757,26 @@ Object.keys(statsMap).forEach(id => {
             }));
         }
 
+        function setTeamMatchEditorMode(isEditing) {
+            const title = document.getElementById('team-match-modal-title');
+            const submit = document.getElementById('btn-submit-team-match');
+            ['team-match-title', 'team-match-date', 'team-match-team-count', 'team-match-rule'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) input.disabled = isEditing;
+            });
+            if (title) title.innerText = isEditing ? '👥 チーム対抗戦の参加メンバーを編集' : '🏌️ チーム対抗戦を作成';
+            if (submit) submit.innerText = isEditing ? '参加メンバーの変更を保存' : 'チーム戦を作成する';
+            const info = document.getElementById('team-match-participants-note');
+            if (info && isEditing) info.innerText = '部員を追加・解除したり、所属チームを変更できます。開催日後・順位確定後も編集できます。';
+        }
+
         window.openTeamMatchCreator = () => {
             if (!currentUserUid) {
                 window.showToast('チーム戦の作成にはログインしてください');
                 return;
             }
+            editingTeamMatchId = null;
+            setTeamMatchEditorMode(false);
             const today = new Date();
             document.getElementById('team-match-date').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             document.getElementById('team-match-title').value = '';
@@ -3768,6 +3784,34 @@ Object.keys(statsMap).forEach(id => {
             document.getElementById('team-match-rule').value = 'daily_average';
             document.getElementById('team-match-member-search').value = '';
             teamMatchDraftTeams = createDraftTeams(2);
+            window.loadTeamMatchParticipants();
+            document.getElementById('modal-team-match-create').classList.remove('hidden');
+        };
+
+        // 作成済みの大会でも、開催日や順位確定状況に関係なく参加者を編集できる。
+        window.editTeamMatchParticipants = (matchId) => {
+            if (!currentUserUid) {
+                window.showToast('参加メンバーの編集にはログインしてください');
+                return;
+            }
+            const match = teamMatchesData.find(item => item.id === matchId);
+            if (!match) {
+                window.showToast('大会データが見つかりません。再読み込みしてください');
+                return;
+            }
+            editingTeamMatchId = matchId;
+            document.getElementById('team-match-title').value = match.title || '';
+            document.getElementById('team-match-date').value = match.date || '';
+            document.getElementById('team-match-team-count').value = String(match.teamCount || (match.teams || []).length || 2);
+            document.getElementById('team-match-rule').value = match.ruleMode || 'daily_average';
+            document.getElementById('team-match-member-search').value = '';
+            teamMatchDraftTeams = (match.teams || []).map((team, index) => ({
+                id: team.id || `match_team_${index + 1}`,
+                name: team.name || TEAM_MATCH_TEAM_NAMES[index] || `Team ${index + 1}`,
+                memberIds: [...(team.memberIds || [])]
+            }));
+            if (teamMatchDraftTeams.length < 2) teamMatchDraftTeams = createDraftTeams(2);
+            setTeamMatchEditorMode(true);
             window.loadTeamMatchParticipants();
             document.getElementById('modal-team-match-create').classList.remove('hidden');
         };
@@ -3817,7 +3861,7 @@ Object.keys(statsMap).forEach(id => {
             const selectedCount = assignedTeamByMember.size;
             const scoredCount = participants.filter(member => member.average !== null).length;
             if (note) {
-                note.innerText = `${participants.length}名の部員から選択できます。現在${selectedCount}名を参加登録中／開催日のスコア登録済みは${scoredCount}名です。スコア未登録の部員も先に参加登録できます。`;
+                note.innerText = `${participants.length}名の部員から選択できます。現在${selectedCount}名を参加登録中／開催日のスコア登録済みは${scoredCount}名です。スコア未登録の部員も先に参加登録できます。${editingTeamMatchId ? '開催日後・順位確定後も追加・解除できます。' : ''}`;
             }
             document.querySelectorAll('[data-team-match-member-checkbox]').forEach(checkbox => {
                 const memberId = checkbox.dataset.memberId;
@@ -3882,7 +3926,7 @@ Object.keys(statsMap).forEach(id => {
             const selectedIds = new Set(teamMatchDraftTeams.flatMap(team => team.memberIds || []));
             const selectedCount = selectedIds.size;
             const scoredCount = participants.filter(member => member.average !== null).length;
-            note.innerText = `${participants.length}名の部員から選択できます。現在${selectedCount}名を参加登録中／開催日のスコア登録済みは${scoredCount}名です。スコア未登録の部員も先に参加登録できます。`;
+            note.innerText = `${participants.length}名の部員から選択できます。現在${selectedCount}名を参加登録中／開催日のスコア登録済みは${scoredCount}名です。スコア未登録の部員も先に参加登録できます。${editingTeamMatchId ? '開催日後・順位確定後も追加・解除できます。' : ''}`;
             const teams = teamMatchDraftTeams || [];
             const assignedTeamByMember = new Map();
             teams.forEach(team => (team.memberIds || []).forEach(id => assignedTeamByMember.set(id, team.id)));
@@ -3959,7 +4003,13 @@ Object.keys(statsMap).forEach(id => {
         document.getElementById('form-team-match-create').addEventListener('submit', async (event) => {
             event.preventDefault();
             if (!currentUserUid || !auth.currentUser) {
-                window.showToast('チーム戦の作成にはログインしてください');
+                window.showToast('チーム戦の作成・編集にはログインしてください');
+                return;
+            }
+            const isEditing = Boolean(editingTeamMatchId);
+            const matchBeingEdited = isEditing ? teamMatchesData.find(item => item.id === editingTeamMatchId) : null;
+            if (isEditing && !matchBeingEdited) {
+                alert('編集対象の大会が見つかりません。チーム戦一覧を再読み込みしてください。');
                 return;
             }
             captureTeamMatchDraftNames();
@@ -3977,8 +4027,10 @@ Object.keys(statsMap).forEach(id => {
                 memberIds: [...(team.memberIds || [])]
             }));
             const assigned = teams.flatMap(team => team.memberIds);
+            // 新規作成時は各チーム1名以上を必須にする。既存大会の編集では、
+            // 一旦チームを空にしてメンバーを入れ替える操作も許可する。
             const emptyTeams = teams.map((team, index) => !team.memberIds.length ? `チーム${index + 1}（${team.name}）` : null).filter(Boolean);
-            if (emptyTeams.length) {
+            if (!isEditing && emptyTeams.length) {
                 alert(`各チームに1名以上の参加者が必要です。次のチームに部員を割り当ててください：\n${emptyTeams.join('、')}`);
                 return;
             }
@@ -3987,78 +4039,110 @@ Object.keys(statsMap).forEach(id => {
                 return;
             }
             if (!assigned.length) {
-                alert('参加者を選択してください。');
+                alert('大会には少なくとも1名の参加者が必要です。');
                 return;
             }
-            const handicapSnapshot = {};
-            assigned.forEach(id => {
-                const participant = teamMatchDraftParticipants.find(member => member.id === id);
-                handicapSnapshot[id] = participant?.handicap ?? null;
+
+            // 既存のHDCPスナップショットは維持し、新規追加者の分だけ追加する。
+            // 解除した部員のスナップショットは取り除く。
+            const handicapSnapshot = isEditing ? { ...(matchBeingEdited.handicapSnapshot || {}) } : {};
+            const assignedSet = new Set(assigned);
+            Object.keys(handicapSnapshot).forEach(id => {
+                if (!assignedSet.has(id)) delete handicapSnapshot[id];
             });
+            assigned.forEach(id => {
+                if (!Object.prototype.hasOwnProperty.call(handicapSnapshot, id)) {
+                    const participant = teamMatchDraftParticipants.find(member => member.id === id);
+                    handicapSnapshot[id] = participant?.handicap ?? null;
+                }
+            });
+
             const creator = membersData.find(member => member.id === currentUserUid);
             const submitButton = document.getElementById('btn-submit-team-match');
-            const originalButtonText = submitButton?.innerText || 'チーム戦を作成する';
+            const originalButtonText = isEditing ? '参加メンバーの変更を保存' : 'チーム戦を作成する';
             if (submitButton) {
                 submitButton.disabled = true;
                 submitButton.innerText = '保存中…';
                 submitButton.classList.add('opacity-60', 'cursor-not-allowed');
             }
             try {
-                // teamMatches コレクションへの新規ドキュメント作成。
-                const teamMatchPayload = {
-                    title,
-                    date,
-                    teamCount: count,
-                    teams,
-                    ruleMode,
-                    handicapSnapshot,
-                    createdBy: currentUserUid,
-                    createdByName: creator?.name || auth.currentUser?.email || 'ログインユーザー',
-                    createdAt: serverTimestamp()
-                };
-                const savedRef = await addDoc(collection(db, 'teamMatches'), teamMatchPayload);
+                let savedMatch;
+                if (isEditing) {
+                    const updatePayload = {
+                        teams,
+                        handicapSnapshot,
+                        updatedAt: serverTimestamp(),
+                        updatedBy: currentUserUid
+                    };
+                    await updateDoc(doc(db, 'teamMatches', editingTeamMatchId), updatePayload);
+                    savedMatch = {
+                        ...matchBeingEdited,
+                        ...updatePayload,
+                        updatedAt: { seconds: Math.floor(Date.now() / 1000) }
+                    };
+                    teamMatchesData = teamMatchesData.map(item => item.id === editingTeamMatchId ? savedMatch : item);
+                    window.closeModal('modal-team-match-create');
+                    editingTeamMatchId = null;
+                    setTeamMatchEditorMode(false);
+                    window.switchTab('team-matches');
+                    renderTeamMatchEvents();
+                    window.showToast(`「${title}」の参加メンバーを更新しました`);
+                } else {
+                    // teamMatches コレクションへの新規ドキュメント作成。
+                    const teamMatchPayload = {
+                        title,
+                        date,
+                        teamCount: count,
+                        teams,
+                        ruleMode,
+                        handicapSnapshot,
+                        createdBy: currentUserUid,
+                        createdByName: creator?.name || auth.currentUser?.email || 'ログインユーザー',
+                        createdAt: serverTimestamp()
+                    };
+                    const savedRef = await addDoc(collection(db, 'teamMatches'), teamMatchPayload);
+                    savedMatch = {
+                        ...teamMatchPayload,
+                        id: savedRef.id,
+                        createdAt: { seconds: Math.floor(Date.now() / 1000) }
+                    };
+                    teamMatchesData = [savedMatch, ...teamMatchesData.filter(item => item.id !== savedRef.id)];
+                    window.closeModal('modal-team-match-create');
+                    window.switchTab('team-matches');
+                    renderTeamMatchEvents();
+                    window.showToast(`チーム対抗戦「${title}」を登録しました`);
+                    console.info('チーム戦を登録しました:', savedRef.id);
+                }
 
-                // onSnapshot の再通知を待たず、保存成功した大会を画面に即時反映。
-                // その後 getDocs でサーバー上の一覧を再取得し、表示を確定する。
-                const optimisticMatch = {
-                    ...teamMatchPayload,
-                    id: savedRef.id,
-                    createdAt: { seconds: Math.floor(Date.now() / 1000) }
-                };
-                teamMatchesData = [optimisticMatch, ...teamMatchesData.filter(item => item.id !== savedRef.id)]
-                    .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || Number(b.createdAt?.seconds || 0) - Number(a.createdAt?.seconds || 0));
-                window.closeModal('modal-team-match-create');
-                window.switchTab('team-matches');
+                teamMatchesData.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || Number(b.createdAt?.seconds || 0) - Number(a.createdAt?.seconds || 0));
                 renderTeamMatchEvents();
-                window.showToast(`チーム対抗戦「${title}」を登録しました`);
-                console.info('チーム戦を登録しました:', savedRef.id);
-
                 try {
                     const refreshed = await getDocs(collection(db, 'teamMatches'));
                     teamMatchesData = refreshed.docs.map(item => ({ id: item.id, ...item.data() }))
                         .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || Number(b.createdAt?.seconds || 0) - Number(a.createdAt?.seconds || 0));
                     renderTeamMatchEvents();
                 } catch (refreshError) {
-                    // 作成自体は成功しているため、直前の即時表示は保持する。
                     console.warn('チーム戦の再取得に失敗しました。リアルタイム同期を待機します。', refreshError);
                     const target = document.getElementById('team-match-events-container');
                     if (target && !teamMatchesData.length) {
-                        target.innerHTML = '<div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">チーム戦は保存されましたが、一覧の再取得に失敗しました。再読み込みを押してください。</div>';
+                        target.innerHTML = '<div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">変更は保存されましたが、一覧の再取得に失敗しました。再読み込みを押してください。</div>';
                     }
                 }
             } catch (err) {
-                console.error('チーム戦の作成に失敗しました', err);
+                console.error(isEditing ? 'チーム戦メンバーの更新に失敗しました' : 'チーム戦の作成に失敗しました', err);
                 if (err.code === 'permission-denied') {
-                    alert('チーム戦を保存できませんでした。Firestoreのセキュリティルールで teamMatches コレクションへの create 権限が許可されていません。Firebase Console の Firestore Rules に teamMatches の作成ルールを追加してください。');
+                    alert(isEditing
+                        ? '参加メンバーを更新できませんでした。Firestore Rules の teamMatches / update 権限を確認してください。'
+                        : 'チーム戦を保存できませんでした。Firestore Rules の teamMatches / create 権限を確認してください。');
                 } else if (err.code === 'unauthenticated') {
                     alert('ログイン状態を確認できませんでした。いったんログアウトして再ログインしてください。');
                 } else {
-                    alert(`チーム戦の登録に失敗しました。\nエラーコード：${err.code || '不明'}\n詳細：${err.message || err}`);
+                    alert(`${isEditing ? '参加メンバーの更新' : 'チーム戦の登録'}に失敗しました。\nエラーコード：${err.code || '不明'}\n詳細：${err.message || err}`);
                 }
             } finally {
                 if (submitButton) {
                     submitButton.disabled = false;
-                    submitButton.innerText = originalButtonText;
+                    submitButton.innerText = editingTeamMatchId ? '参加メンバーの変更を保存' : (document.getElementById('team-match-modal-title')?.innerText.includes('作成') ? 'チーム戦を作成する' : originalButtonText);
                     submitButton.classList.remove('opacity-60', 'cursor-not-allowed');
                 }
             }
@@ -4205,7 +4289,7 @@ Object.keys(statsMap).forEach(id => {
                             ${isWinner ? getTeamVictoryBadgeHTML() : ''}
                         </div>
                         <div class="mt-2 pt-2 border-t border-slate-100 space-y-1.5">
-                            ${team.memberResults.map(member => {
+                            ${team.memberResults.length ? team.memberResults.map(member => {
                                 let resultLabel = member.missingReason || '';
                                 if (!resultLabel && member.dailyAverage !== null) {
                                     if (usesHandicap) resultLabel = `${member.dailyAverage.toFixed(1)} − ${member.handicap.toFixed(1)} = ${member.value.toFixed(1)}`;
@@ -4214,7 +4298,7 @@ Object.keys(statsMap).forEach(id => {
                                     else resultLabel = `${member.dailyAverage.toFixed(1)}打`;
                                 }
                                 return `<div class="flex justify-between items-start gap-2 text-[10px]"><span class="text-slate-600 truncate">${escapeHtml(member.name)}</span><span class="font-bold text-slate-700 whitespace-nowrap">${escapeHtml(resultLabel)}${member.rounds ? ` (${member.rounds}R)` : ''}</span></div>`;
-                            }).join('')}
+                            }).join('') : '<p class="text-[10px] text-slate-400">参加メンバー未登録</p>'}
                         </div>
                     </div>`;
                 }).join('');
@@ -4222,7 +4306,7 @@ Object.keys(statsMap).forEach(id => {
                 return `<article class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
                     <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                         <div class="min-w-0"><h4 class="font-bold text-sm text-slate-800">${escapeHtml(match.title || 'チーム対抗戦')}</h4><p class="text-[10px] text-slate-500 mt-1">開催日：${escapeHtml(match.date || '--')} ／ 作成：${escapeHtml(match.createdByName || '部員')}</p></div>
-                        <div class="flex flex-wrap items-center gap-2"><span class="text-[10px] rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 px-2.5 py-1">${escapeHtml(ruleLabel)}</span><span class="text-[10px] rounded-full ${isFinal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} px-2.5 py-1 font-bold">${statusLabel}</span>${currentUserUid ? `<button type="button" onclick="window.deleteTeamMatch('${escapeHtml(match.id)}')" class="text-[10px] font-bold text-rose-600 border border-rose-200 hover:bg-rose-50 rounded-lg px-2.5 py-1.5">削除</button>` : ''}</div>
+                        <div class="flex flex-wrap items-center gap-2"><span class="text-[10px] rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 px-2.5 py-1">${escapeHtml(ruleLabel)}</span><span class="text-[10px] rounded-full ${isFinal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} px-2.5 py-1 font-bold">${statusLabel}</span>${currentUserUid ? `<button type="button" onclick="window.editTeamMatchParticipants('${escapeHtml(match.id)}')" class="text-[10px] font-bold text-emerald-700 border border-emerald-200 hover:bg-emerald-50 rounded-lg px-2.5 py-1.5">参加者を編集</button><button type="button" onclick="window.deleteTeamMatch('${escapeHtml(match.id)}')" class="text-[10px] font-bold text-rose-600 border border-rose-200 hover:bg-rose-50 rounded-lg px-2.5 py-1.5">削除</button>` : ''}</div>
                     </div>
                     <div class="p-3 sm:p-4 space-y-3">
                         <div><h5 class="text-xs font-black text-slate-700 mb-2">🏆 チーム順位</h5><div class="overflow-x-auto rounded-xl border border-slate-200"><table class="w-full text-left"><thead class="bg-slate-100 text-[10px] text-slate-500"><tr><th class="px-3 py-2 text-center">順位</th><th class="px-3 py-2">チーム</th><th class="px-3 py-2 text-right">${scoreLabel}</th></tr></thead><tbody>${rankTableRows}</tbody></table></div></div>
