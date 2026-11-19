@@ -22,6 +22,74 @@
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         .border-promotion { border-bottom: 3px solid #10b981 !important; background-color: rgba(16, 185, 129, 0.05); }
         .border-demotion { border-bottom: 3px solid #f43f5e !important; background-color: rgba(244, 63, 94, 0.05); }
+        .achievement-medal { position:relative; overflow:hidden; border-radius:16px; padding:12px 10px; min-height:132px; color:#fff; text-align:center; box-shadow:0 6px 16px rgba(15,23,42,.14); border:2px solid rgba(255,255,255,.72); }
+        .achievement-medal:before { content:""; position:absolute; inset:5px; border:1px solid rgba(255,255,255,.55); border-radius:11px; pointer-events:none; }
+        .achievement-medal:after { content:"✦　✧　✦"; position:absolute; top:7px; left:0; right:0; font-size:10px; letter-spacing:5px; opacity:.8; }
+        .achievement-medal .medal-icon { font-size:34px; line-height:1.2; filter:drop-shadow(0 2px 2px rgba(0,0,0,.2)); }
+        .achievement-medal .medal-title { font-size:12px; font-weight:900; line-height:1.35; margin-top:5px; text-shadow:0 1px 2px rgba(0,0,0,.18); }
+        .achievement-medal .medal-month { font-size:10px; font-weight:700; opacity:.9; margin-top:3px; }
+        .medal-gold { background:linear-gradient(145deg,#f59e0b,#b45309); }
+        .medal-rose { background:linear-gradient(145deg,#fb7185,#be185d); }
+        .medal-blue { background:linear-gradient(145deg,#60a5fa,#1d4ed8); }
+        .medal-emerald { background:linear-gradient(145deg,#34d399,#047857); }
+        .medal-violet { background:linear-gradient(145deg,#a78bfa,#6d28d9); }
+        .medal-silver { background:linear-gradient(145deg,#94a3b8,#475569); }
+        .medal-bronze { background:linear-gradient(145deg,#cd7f32,#8c4a1c); }
+        /* 月間称号タブでは受賞バッジを従来の約2倍サイズで表示 */
+        .achievement-medal.award-large { min-height:188px; padding:20px 14px; border-radius:22px; }
+        .achievement-medal.award-large:before { inset:8px; border-radius:15px; }
+        .achievement-medal.award-large:after { top:13px; font-size:15px; letter-spacing:7px; }
+        .achievement-medal.award-large .medal-icon { font-size:58px; line-height:1.25; }
+        .achievement-medal.award-large .medal-title { font-size:19px; line-height:1.35; margin-top:10px; }
+        .achievement-medal.award-large .medal-month { font-size:13px; margin-top:7px; }
+        /* 月間称号・シーズン表彰：横長バッジ＋説明の2カラム表示 */
+        .award-horizontal-row {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0 18px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .award-horizontal-row:last-child { border-bottom: 0; }
+        .achievement-medal.award-horizontal {
+            width: 100%;
+            min-height: 106px;
+            height: 106px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            text-align: center;
+        }
+        .achievement-medal.award-horizontal:before { inset: 4px; border-radius: 9px; }
+        .achievement-medal.award-horizontal:after { top: 7px; font-size: 9px; letter-spacing: 5px; }
+        .achievement-medal.award-horizontal .medal-icon { font-size: 25px; line-height: 1.1; }
+        .achievement-medal.award-horizontal .medal-title { font-size: 15px; line-height: 1.3; margin-top: 3px; }
+        .achievement-medal.award-horizontal .medal-month { font-size: 11px; line-height: 1.2; margin-top: 2px; }
+        .award-info { min-width: 0; padding: 3px 0; }
+        .award-info-title { font-size: 15px; line-height: 1.35; font-weight: 900; color: #111827; }
+        .award-info-description { margin-top: 5px; font-size: 13px; line-height: 1.55; color: #334155; }
+        .award-winner-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .award-winner-chip { display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; padding: 4px 9px; background: #dcfce7; color: #166534; font-size: 11px; line-height: 1.35; font-weight: 800; }
+        .award-nominee-list { display: grid; gap: 5px; margin-top: 8px; }
+        .award-nominee-item { border-left: 3px solid #a5b4fc; padding: 3px 0 3px 8px; min-width: 0; }
+        .award-nominee-name { color: #1f2937; font-size: 12px; font-weight: 900; }
+        .award-nominee-detail { color: #64748b; font-size: 10px; line-height: 1.45; margin-top: 1px; }
+        @media (max-width: 560px) {
+            .award-horizontal-row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+            .achievement-medal.award-horizontal { height: 104px; min-height: 104px; }
+            .award-info { padding: 0 3px 3px; }
+        }
+        .achievement-medal.mini { min-height:94px; padding:8px 6px; border-radius:12px; }
+        .achievement-medal.mini .medal-icon { font-size:25px; }
+        .achievement-medal.mini .medal-title { font-size:10px; }
+        .achievement-medal.mini .medal-month { font-size:9px; }
+        .pb-popup-glow { box-shadow:0 0 0 6px rgba(251,191,36,.15), 0 20px 60px rgba(15,23,42,.30); }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between">
@@ -81,6 +149,12 @@
                 </button>
                 <button type="button" onclick="window.switchTab('members')" id="tab-members" class="nav-tab text-emerald-300 hover:text-white px-4 py-2 flex items-center gap-2 whitespace-nowrap cursor-pointer">
                     👥 部員一覧・管理
+                </button>
+                <button type="button" onclick="window.switchTab('monthly-awards')" id="tab-monthly-awards" class="nav-tab text-emerald-300 hover:text-white px-4 py-2 flex items-center gap-2 whitespace-nowrap cursor-pointer">
+                    🏅 月間称号
+                </button>
+                <button type="button" onclick="window.switchTab('team-matches')" id="tab-team-matches" class="nav-tab text-emerald-300 hover:text-white px-4 py-2 flex items-center gap-2 whitespace-nowrap cursor-pointer">
+                    🏌️ チーム対抗戦
                 </button>
                 <button type="button" onclick="window.switchTab('analytics')" id="tab-analytics" class="nav-tab text-emerald-300 hover:text-white px-4 py-2 flex items-center gap-2 whitespace-nowrap cursor-pointer">
                     📊 戦績アナリティクス
@@ -305,7 +379,63 @@
             </div>
         </section>
 
-        <!-- SECTION 5: ANALYTICS -->
+        <!-- SECTION 5: MONTHLY AWARDS -->
+        <section id="sec-monthly-awards" class="hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-end gap-3">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">🏅 月間称号・実績バッジ</h2>
+                    <p class="text-xs text-slate-500 mt-1">毎月1日に前月分の月間称号を発表。シーズン更新時には各Divisionの最終1〜3位も表彰します。</p>
+                </div>
+                <div class="flex items-center gap-2 bg-white border border-slate-300 rounded-lg px-3 py-2 shadow-sm">
+                    <label for="achievement-month" class="text-xs text-slate-500 font-bold">受賞月</label>
+                    <select id="achievement-month" onchange="window.renderAchievementsTab()" class="text-sm font-bold text-emerald-800 focus:outline-none">
+                        <option value="">発表済みの称号はまだありません</option>
+                    </select>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between gap-2">
+                    <h3 class="font-bold text-base text-slate-800">✨ 月間称号</h3>
+                    <span class="text-[10px] text-slate-400" id="monthly-awards-publication-label">毎月1日に先月分を発表</span>
+                </div>
+                <div id="monthly-awards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+            </div>
+
+            <div class="space-y-3 border-t border-slate-200 pt-6">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                    <div>
+                        <h3 class="font-bold text-base text-slate-800">🏆 シーズンDivision表彰</h3>
+                        <p class="text-xs text-slate-500 mt-1">シーズン更新時に、各Divisionの最終1〜3位へ表彰バッジを授与します。</p>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white border border-slate-300 rounded-lg px-3 py-2 shadow-sm">
+                        <label for="achievement-season" class="text-xs text-slate-500 font-bold">対象シーズン</label>
+                        <select id="achievement-season" onchange="window.renderAchievementsTab()" class="text-sm font-bold text-emerald-800 focus:outline-none">
+                            <option value="">表彰済みのシーズンはありません</option>
+                        </select>
+                    </div>
+                </div>
+                <p class="text-[10px] text-slate-400" id="season-awards-publication-label">シーズン更新時に自動で表彰します。</p>
+                <div id="season-awards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: TEAM MATCHES -->
+        <section id="sec-team-matches" class="hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-end gap-3">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">🏌️ チーム対抗戦</h2>
+                    <p class="text-xs text-slate-500 mt-1">開催日・参加部員・チーム数・集計ルールを自由に設定して大会を作成できます。</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" id="btn-refresh-team-matches" onclick="window.refreshTeamMatches()" class="text-slate-600 bg-white border border-slate-300 hover:bg-slate-50 text-xs font-bold px-3 py-2.5 rounded-lg">↻ 再読み込み</button>
+                    <button type="button" id="btn-create-team-match" onclick="window.openTeamMatchCreator()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg shadow">＋ チーム戦を作成</button>
+                </div>
+            </div>
+            <p id="team-match-login-note" class="text-xs text-slate-500 bg-slate-50 rounded-lg p-3">チーム戦の作成・削除にはログインが必要です。閲覧はログインなしでもできます。</p>
+            <div id="team-match-events-container" class="space-y-4"></div>
+        </section>
+
+        <!-- SECTION 6: ANALYTICS -->
         <section id="sec-analytics" class="hidden space-y-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div>
@@ -395,6 +525,12 @@
                         <p class="text-xs text-slate-500" id="mypage-profile-grade">--</p>
                     </div>
                     <div id="mypage-profile-badge" class="pt-1"></div>
+                    <div class="border-t border-slate-100 pt-3 text-left space-y-2">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase">MY TROPHY CASE</p>
+                        <div id="mypage-equipped-badges" class="grid grid-cols-3 gap-2">
+                            <p class="col-span-3 text-[11px] text-slate-400 text-center">獲得した称号をここに飾れます</p>
+                        </div>
+                    </div>
 
                     <div class="border-t border-slate-100 pt-4 grid grid-cols-2 gap-2 text-left">
                         <div class="bg-slate-50 p-2.5 rounded-lg">
@@ -451,6 +587,15 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase mb-1">自己紹介 / 今季目標スコア (任意)</label>
                             <textarea id="mypage-input-bio" rows="3" class="w-full text-sm border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500"></textarea>
+                        </div>
+
+                        <div class="border-t border-slate-100 pt-4 space-y-2">
+                            <div class="flex items-center justify-between gap-2">
+                                <label class="text-xs font-bold text-slate-700">🏅 マイバッジの装備</label>
+                                <span class="text-[10px] text-slate-400">最大3個まで表示</span>
+                            </div>
+                            <p class="text-[10px] text-slate-500">獲得済みの月間称号・シーズン表彰から、プロフィールに飾るバッジを選べます。</p>
+                            <div id="mypage-badge-options" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>
                         </div>
 
                         <div class="pt-2 flex justify-end">
@@ -807,6 +952,35 @@
                             <span id="detail-rivalry-draws-rate" class="block text-lg font-extrabold text-slate-900 mt-1">0 / --</span>
                         </div>
                     </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <div class="bg-rose-50 border border-rose-100 p-3 rounded-lg text-center">
+                            <span class="block text-[10px] font-bold text-rose-700">現在の連勝・連敗</span>
+                            <span id="detail-rival-current-streak" class="block text-lg font-black text-rose-700">--</span>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-100 p-3 rounded-lg text-center">
+                            <span class="block text-[10px] font-bold text-amber-800">過去最多連勝</span>
+                            <span id="detail-rival-max-win-streak" class="block text-lg font-black text-amber-900">0連勝</span>
+                        </div>
+                        <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-lg text-center">
+                            <span class="block text-[10px] font-bold text-indigo-700">過去最多連敗</span>
+                            <span id="detail-rival-max-loss-streak" class="block text-lg font-black text-indigo-900">0連敗</span>
+                        </div>
+                    </div>
+                    <div id="detail-rival-prediction" class="rounded-xl border border-violet-100 bg-violet-50/50 p-3 sm:p-4 space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                            <div>
+                                <h5 class="text-sm font-bold text-slate-800">🔮 次回対戦の勝敗予想</h5>
+                                <p class="text-[10px] text-slate-500">現在レート・直近10ラウンド平均・通算平均・過去の直接対決から算出する参考確率です。</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-center">
+                            <div class="bg-white border border-rose-100 rounded-lg p-2"><span class="block text-[10px] text-rose-600 font-bold">勝ち</span><strong id="prediction-win" class="text-xl text-rose-700">--%</strong></div>
+                            <div class="bg-white border border-slate-200 rounded-lg p-2"><span class="block text-[10px] text-slate-600 font-bold">引き分け</span><strong id="prediction-draw" class="text-xl text-slate-800">--%</strong></div>
+                            <div class="bg-white border border-blue-100 rounded-lg p-2"><span class="block text-[10px] text-blue-700 font-bold">負け</span><strong id="prediction-loss" class="text-xl text-blue-700">--%</strong></div>
+                        </div>
+                        <p id="prediction-explanation" class="text-[10px] text-slate-500"></p>
+                        <p class="border-t border-violet-100 pt-2 text-[10px] text-slate-500">この予想は現在の成績データから算出した参考値です。保存・的中率の集計は行いません。</p>
+                    </div>
                     <div class="space-y-2">
                         <div class="flex flex-wrap items-center justify-between gap-2">
                             <span class="text-sm font-bold text-slate-700">対戦結果の割合</span>
@@ -884,6 +1058,70 @@
         </div>
     </div>
 
+    <!-- MODAL: TEAM MATCH CREATOR -->
+    <div id="modal-team-match-create" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-3 sm:p-4">
+        <div id="team-match-modal-scroll" class="bg-white rounded-2xl shadow-xl max-w-4xl w-full max-h-[94vh] overflow-y-auto overscroll-contain">
+            <div class="bg-emerald-900 px-5 py-4 text-white flex justify-between items-center sticky top-0 z-10">
+                <h3 class="font-bold text-base">🏌️ チーム対抗戦を作成</h3>
+                <button type="button" onclick="window.closeModal('modal-team-match-create')" class="text-emerald-200 hover:text-white font-bold">✖</button>
+            </div>
+            <form id="form-team-match-create" class="p-4 sm:p-6 space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label for="team-match-title" class="block text-xs font-bold text-slate-700 mb-1">大会名</label>
+                        <input id="team-match-title" maxlength="50" required placeholder="例：11月月例チーム戦" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm">
+                    </div>
+                    <div>
+                        <label for="team-match-date" class="block text-xs font-bold text-slate-700 mb-1">開催日</label>
+                        <input id="team-match-date" type="date" required onchange="window.loadTeamMatchParticipants()" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm">
+                    </div>
+                    <div>
+                        <label for="team-match-team-count" class="block text-xs font-bold text-slate-700 mb-1">チーム数</label>
+                        <select id="team-match-team-count" onchange="window.loadTeamMatchParticipants()" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-white">
+                            <option value="2">2チーム</option>
+                            <option value="3">3チーム</option>
+                            <option value="4">4チーム</option>
+                            <option value="5">5チーム</option>
+                            <option value="6">6チーム</option>
+                            <option value="7">7チーム</option>
+                            <option value="8">8チーム</option>
+                            <option value="9">9チーム</option>
+                            <option value="10">10チーム</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="team-match-rule" class="block text-xs font-bold text-slate-700 mb-1">勝敗ルール</label>
+                        <select id="team-match-rule" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-white">
+                            <option value="daily_average">当日のスコア平均（低い方が勝ち）</option>
+                            <option value="daily_net_average">（当日のスコア－ハンディキャップ）の平均（低い方が勝ち）</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="rounded-lg bg-emerald-50 border border-emerald-100 p-3 text-xs text-emerald-900 space-y-1">
+                    <p>部員一覧から参加者を選び、各チームに割り当ててください。開催日のスコアが未登録でも参加者として登録できます。</p>
+                    <p>「当日のスコア平均」は各参加者の当日平均スコアをチーム内で平均します。「（当日のスコア－ハンディキャップ）の平均」は各参加者の当日平均から、作成時点の現シーズンHDCPを引いた値をチーム内で平均します。</p>
+                    <p>HDCPが未確定（現シーズン3ラウンド未満）の部員はHDCP集計では未確定扱いとなり、HDCPが確定するまで順位は暫定です。確定済みHDCPは大会作成時点の値を使用します。</p>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">参加者を選択・チーム分け</h4>
+                        <p id="team-match-participants-note" class="text-[11px] text-slate-500 mt-1">部員一覧から参加者を選択してください。</p>
+                    </div>
+                    <button type="button" onclick="window.autoDraftTeamMatch()" class="px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold">🎲 選択した部員をレート順に自動振り分け</button>
+                </div>
+                <div>
+                    <label for="team-match-member-search" class="block text-xs font-bold text-slate-700 mb-1">部員を検索</label>
+                    <input id="team-match-member-search" type="search" oninput="window.filterTeamMatchMembers()" placeholder="部員名・学年で検索" autocomplete="off" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div id="team-match-draft-editor" class="space-y-3"></div>
+                <div class="flex justify-end gap-2 border-t border-slate-100 pt-4">
+                    <button type="button" onclick="window.closeModal('modal-team-match-create')" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg">キャンセル</button>
+                    <button type="submit" id="btn-submit-team-match" class="px-5 py-2.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow">チーム戦を作成する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- JS SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -904,6 +1142,7 @@
             setDoc,
             updateDoc,
             onSnapshot, 
+            getDocs,
             query, 
             orderBy, 
             serverTimestamp 
@@ -940,6 +1179,18 @@
 
         let chartDistInstance = null;
         let chartGradeHdcpInstance = null;
+        let monthlyAwardsCache = new Map();
+        // 月間急成長賞の計算にのみ利用。画面上のレート推移グラフは表示しない。
+        let ratingHistoryCache = new Map();
+        let currentDetailMemberId = null;
+        let teamMatchesData = [];
+        let teamMatchDraftTeams = [];
+        let teamMatchDraftParticipants = [];
+        let monthlyAwardsData = [];
+        let monthlyAwardsSnapshotReady = false;
+        let membersSnapshotReady = false;
+        let scoresSnapshotReady = false;
+        let publishingPreviousMonth = false;
 
         function getRankBadge(rating) {
             if (rating >= 3800) {
@@ -1010,7 +1261,7 @@
         window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
 
         window.switchTab = (tabName) => {
-            ['dashboard', 'scores', 'daily', 'members', 'analytics', 'mypage', 'admin'].forEach(t => {
+            ['dashboard', 'scores', 'daily', 'members', 'monthly-awards', 'team-matches', 'analytics', 'mypage', 'admin'].forEach(t => {
                 const sec = document.getElementById(`sec-${t}`);
                 const btn = document.getElementById(`tab-${t}`);
                 if (t === tabName) {
@@ -1032,6 +1283,10 @@
                 renderMyPage();
             } else if (tabName === 'members') {
                 window.renderMembersGrid();
+            } else if (tabName === 'monthly-awards') {
+                window.renderAchievementsTab();
+            } else if (tabName === 'team-matches') {
+                renderTeamMatchEvents();
             }
         };
 
@@ -1088,10 +1343,60 @@
                 document.getElementById('admin-auth-container').classList.add('hidden');
                 document.getElementById('admin-panel').classList.remove('hidden');
                 window.showToast("管理者権限が認証されました");
+                window.renderAchievementsTab();
             } else {
                 alert("パスワードが違います");
             }
         });
+
+        // シーズン終了時点のDivision別最終順位から、各Divisionの1〜3位を表彰データにする。
+        function buildSeasonPodiumAwards(seasonNumber, processedMembers) {
+            const sortedAll = [...processedMembers].sort(compareMembers);
+            const groups = { '1': [], '2': [], '3': [] };
+
+            if (Number(seasonNumber) === 1) {
+                // season 1終了時は全員が初期Division 3のため、既存の初回振分ルール
+                // （全体1〜15位=Div1、16〜35位=Div2、それ以外=Div3）に沿って表彰対象を分ける。
+                groups['1'] = sortedAll.slice(0, 15);
+                groups['2'] = sortedAll.slice(15, 35);
+                groups['3'] = sortedAll.slice(35);
+            } else {
+                ['1', '2', '3'].forEach(division => {
+                    groups[division] = sortedAll
+                        .filter(member => String(member.division || '3') === division)
+                        .sort(compareMembers);
+                });
+            }
+
+            const rankLabels = ['優勝', '準優勝', '3位'];
+            const rankIcons = ['🏆', '🥈', '🥉'];
+            const rankThemes = ['medal-gold', 'medal-silver', 'medal-bronze'];
+            const awards = [];
+
+            ['1', '2', '3'].forEach(division => {
+                groups[division].slice(0, 3).forEach((member, index) => {
+                    const rank = index + 1;
+                    const seasonKey = `season_${seasonNumber}`;
+                    awards.push({
+                        type: 'season_division_podium',
+                        title: `Division ${division} ${rankLabels[index]}`,
+                        icon: rankIcons[index],
+                        theme: rankThemes[index],
+                        division,
+                        rank,
+                        winners: [{
+                            id: member.id,
+                            name: member.name || '部員',
+                            division,
+                            value: `season ${seasonNumber}・${rank}位`,
+                            badgeId: `${seasonKey}_division_${division}_rank_${rank}_${member.id}`
+                        }]
+                    });
+                });
+            });
+
+            return awards;
+        }
 
         window.createNewSeason = async () => {
             if (!isAdminAuthenticated) return;
@@ -1101,6 +1406,20 @@
             if (confirm(`本当にシーズンを更新しますか？\nシーズン ${curr} の成績に基づいて自動昇降格処理を行い、「season ${nextSeason}」を開始します。\n（※全員のレートは新シーズンで3000にリセットされます）`)) {
                 try {
                     const { processedMembers } = calculateEloAndStats(curr.toString(), 'all');
+                    const seasonKey = `season_${curr}`;
+                    const existingSeasonAwards = systemSettings.seasonAwards || {};
+                    const podiumAwards = existingSeasonAwards[seasonKey]
+                        ? existingSeasonAwards[seasonKey].awards
+                        : buildSeasonPodiumAwards(curr, processedMembers);
+                    const updatedSeasonAwards = {
+                        ...existingSeasonAwards,
+                        [seasonKey]: existingSeasonAwards[seasonKey] || {
+                            season: curr,
+                            title: `season ${curr} Division表彰`,
+                            awards: podiumAwards,
+                            publishedAt: serverTimestamp()
+                        }
+                    };
                     
                     if (curr === 1) {
                         const sorted = [...processedMembers].sort(compareMembers);
@@ -1163,9 +1482,11 @@
                     await setDoc(doc(db, "system", "config"), {
                         ...systemSettings,
                         currentSeason: nextSeason,
+                        seasonAwards: updatedSeasonAwards,
                         updatedAt: serverTimestamp()
                     });
-                    window.showToast(`season ${nextSeason} がスタートし、昇降格処理が完了しました！`);
+                    window.showToast(`season ${nextSeason} がスタートし、season ${curr} のDivision表彰も確定しました！`);
+                    window.renderAchievementsTab();
                 } catch (err) {
                     alert("シーズン更新エラー: " + err.message);
                 }
@@ -1259,6 +1580,8 @@
             }
             renderMyPage();
             window.renderMembersGrid();
+            renderTeamMatchEvents();
+            maybePublishPreviousMonthAwards();
         });
 
         function setupRealtimeListeners() {
@@ -1266,6 +1589,8 @@
                 if (docSnap.exists()) {
                     systemSettings = docSnap.data();
                     if (!systemSettings.disabledDates) systemSettings.disabledDates = [];
+                    monthlyAwardsCache.clear();
+                    ratingHistoryCache.clear();
                 } else {
                     setDoc(doc(db, "system", "config"), { currentSeason: 1, disabledDates: [] });
                     systemSettings = { currentSeason: 1, disabledDates: [] };
@@ -1276,13 +1601,62 @@
 
             onSnapshot(query(collection(db, "members")), (snapshot) => {
                 membersData = snapshot.docs.map(doc => ({ id: doc.id, gender: '男', ...doc.data() }));
+                membersSnapshotReady = true;
+                monthlyAwardsCache.clear();
+                ratingHistoryCache.clear();
                 renderAll();
+                refreshMemberDetailIfOpen();
+                    maybePublishPreviousMonthAwards();
             });
 
             onSnapshot(query(collection(db, "scores"), orderBy("date", "desc")), (snapshot) => {
                 scoresData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                scoresSnapshotReady = true;
+                monthlyAwardsCache.clear();
+                ratingHistoryCache.clear();
                 renderAll();
+                refreshMemberDetailIfOpen();
+                    maybePublishPreviousMonthAwards();
             });
+
+            // チーム戦はリアルタイム同期。描画例外も画面に出して原因を隠さない。
+            onSnapshot(collection(db, 'teamMatches'), (snapshot) => {
+                teamMatchesData = snapshot.docs.map(item => ({ id: item.id, ...item.data() }))
+                    .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || Number(b.createdAt?.seconds || 0) - Number(a.createdAt?.seconds || 0));
+                try {
+                    renderTeamMatchEvents();
+                } catch (renderError) {
+                    console.error('チーム戦一覧の描画に失敗しました', renderError);
+                    const target = document.getElementById('team-match-events-container');
+                    if (target) target.innerHTML = `<div class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">チーム戦は読み込めましたが、表示処理でエラーが発生しました。ページを再読み込みしてください。<br><span class="text-xs">${escapeHtml(renderError.message || renderError)}</span></div>`;
+                }
+            }, (err) => {
+                console.error('teamMatches の読み込みに失敗しました', err);
+                const reason = err.code === 'permission-denied'
+                    ? 'Firestoreルールで teamMatches の読み取り（list）が許可されていません。'
+                    : `チーム戦データを読み込めませんでした（${err.code || err.message}）。`;
+                const target = document.getElementById('team-match-events-container');
+                if (target) target.innerHTML = `<div class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">${escapeHtml(reason)}<br>Firestore Rules の teamMatches / read 権限を確認してください。</div>`;
+                window.showToast(reason);
+            });
+
+            // 毎月1日に確定した称号を履歴として読み込む。
+            onSnapshot(collection(db, 'monthlyAwards'), (snapshot) => {
+                monthlyAwardsData = snapshot.docs.map(item => ({ id: item.id, ...item.data() }))
+                    .sort((a, b) => String(b.month || b.id).localeCompare(String(a.month || a.id)));
+                monthlyAwardsSnapshotReady = true;
+                monthlyAwardsCache.clear();
+                renderAchievementsTab();
+                renderMyPage();
+                maybePublishPreviousMonthAwards();
+            });
+        }
+
+        function refreshMemberDetailIfOpen() {
+            const modal = document.getElementById('modal-member-detail');
+            if (currentDetailMemberId && modal && !modal.classList.contains('hidden')) {
+                window.openMemberDetailModal(currentDetailMemberId);
+            }
         }
 
         function updateSeasonBadgesAndDropdowns() {
@@ -1506,7 +1880,7 @@
         };
 
         window.saveBatchScoresFromAI = async () => {
-            const rows = document.querySelectorAll('.ai-row');
+            const rows = Array.from(document.querySelectorAll('.ai-row'));
             if (rows.length === 0) {
                 alert("登録するデータがありません。");
                 return;
@@ -1514,7 +1888,6 @@
 
             const commonCourse = document.getElementById('ai-common-course').value.trim();
             const commonDate = document.getElementById('ai-common-date').value;
-
             if (!commonCourse) {
                 alert("共通のゴルフ場名を入力してください。");
                 return;
@@ -1525,49 +1898,41 @@
             }
 
             window.showToast("💾 Firestoreへ一括保存中です...");
-
             try {
-                const promises = [];
                 let unmatchedCount = 0;
-
-                rows.forEach(tr => {
+                const entries = rows.map((tr, index) => {
                     const rawName = tr.querySelector('.ai-input-name').value.trim().replace(/\s+/g, '');
                     const outScore = parseInt(tr.querySelector('.ai-input-out').value) || 0;
                     const inScore = parseInt(tr.querySelector('.ai-input-in').value) || 0;
                     const totalScore = outScore + inScore;
                     const puttsVal = tr.querySelector('.ai-input-putts').value;
-                    const putts = puttsVal !== "" ? parseInt(puttsVal) : null;
-
                     const matchedMember = membersData.find(m => m.name === rawName || m.name.includes(rawName) || rawName.includes(m.name));
-                    
-                    const memberId = matchedMember ? matchedMember.id : "unknown_member";
-                    const memberName = matchedMember ? matchedMember.name : rawName;
-
-                    if (!matchedMember) {
-                        unmatchedCount++;
-                    }
-
-                    promises.push(
-                        addDoc(collection(db, "scores"), {
-                            memberId,
-                            memberName,
-                            date: commonDate,
-                            course: commonCourse,
-                            outScore,
-                            inScore,
-                            totalScore,
-                            putts,
-                            type: "部内合宿",
-                            season: systemSettings.currentSeason || 1,
-                            createdAt: serverTimestamp()
-                        })
-                    );
+                    if (!matchedMember) unmatchedCount++;
+                    return {
+                        index, memberId: matchedMember ? matchedMember.id : "unknown_member",
+                        memberName: matchedMember ? matchedMember.name : rawName,
+                        outScore, inScore, totalScore,
+                        putts: puttsVal !== "" ? parseInt(puttsVal) : null
+                    };
                 });
+
+                const promises = entries.map(entry => addDoc(collection(db, "scores"), {
+                    memberId: entry.memberId,
+                    memberName: entry.memberName,
+                    date: commonDate,
+                    course: commonCourse,
+                    outScore: entry.outScore,
+                    inScore: entry.inScore,
+                    totalScore: entry.totalScore,
+                    putts: entry.putts,
+                    type: "部内合宿",
+                    season: systemSettings.currentSeason || 1,
+                    createdAt: serverTimestamp()
+                }));
 
                 await Promise.all(promises);
                 window.closeModal('modal-score');
-                window.showToast(`✅ ${rows.length}件のスコアを一括登録しました！${unmatchedCount > 0 ? `(⚠️名簿未一致 ${unmatchedCount}件)` : ''}`);
-
+                window.showToast(`✅ ${entries.length}件のスコアを一括登録しました！${unmatchedCount > 0 ? `(⚠️名簿未一致 ${unmatchedCount}件)` : ''}`);
             } catch (err) {
                 alert("一括保存エラー: " + err.message);
             }
@@ -1590,7 +1955,6 @@
 
             const member = membersData.find(m => m.id === memberId);
             const memberName = member ? member.name : "不明";
-
             try {
                 await addDoc(collection(db, "scores"), {
                     memberId, 
@@ -1632,13 +1996,15 @@
             const updatedGrade = document.getElementById('mypage-input-grade').value;
             const updatedPhoto = document.getElementById('mypage-input-photo').value.trim() || '⛳';
             const updatedBio = document.getElementById('mypage-input-bio').value.trim();
+            const equippedBadges = Array.from(document.querySelectorAll('input[name="mypage-equipped-badge"]:checked')).map(input => input.value).slice(0, 3);
 
             try {
                 await updateDoc(doc(db, "members", currentUserUid), {
                     name: updatedName,
                     grade: updatedGrade,
                     photoUrl: updatedPhoto,
-                    bio: updatedBio
+                    bio: updatedBio,
+                    equippedBadges
                 });
                 window.showToast("プロフィール情報を更新しました！");
             } catch (err) {
@@ -1665,10 +2031,26 @@
                 };
             });
 
+            // レート計算は実際のプレー日順に再現する。
+            // createdAtを先に使うと、過去日付のスコアを後日登録した場合や
+            // AI一括登録時に、Eloの計算順がプレー日の時系列と逆転してしまう。
+            // 同じプレー日の中だけ、登録日時をタイブレークとして使う。
             const sortedScoresAsc = [...scoresData].sort((a, b) => {
-                const dateA = a.createdAt?.toMillis ? a.createdAt.toMillis() : new Date(a.date).getTime();
-                const dateB = b.createdAt?.toMillis ? b.createdAt.toMillis() : new Date(b.date).getTime();
-                return dateA - dateB;
+                const dateA = String(a.date || '');
+                const dateB = String(b.date || '');
+                if (dateA !== dateB) {
+                    if (!dateA) return 1;
+                    if (!dateB) return -1;
+                    return dateA.localeCompare(dateB);
+                }
+
+                const createdA = a.createdAt?.toMillis
+                    ? a.createdAt.toMillis()
+                    : (a.createdAt?.seconds ? a.createdAt.seconds * 1000 : 0);
+                const createdB = b.createdAt?.toMillis
+                    ? b.createdAt.toMillis()
+                    : (b.createdAt?.seconds ? b.createdAt.seconds * 1000 : 0);
+                return createdA - createdB;
             });
 
             sortedScoresAsc.forEach(s => {
@@ -1707,9 +2089,17 @@
             });
 
             const runningRatings = {};
+            const ratingHistoryByMember = {};
             membersData.forEach(m => {
                 runningRatings[m.id] = 3000;
+                ratingHistoryByMember[m.id] = [{ date: null, rating: 3000 }];
             });
+            const recordRatingSnapshot = (date) => {
+                Object.keys(runningRatings).forEach(id => {
+                    if (!ratingHistoryByMember[id]) ratingHistoryByMember[id] = [];
+                    ratingHistoryByMember[id].push({ date, rating: runningRatings[id] });
+                });
+            };
 
             const uniqueDates = [];
             filteredScores.forEach(s => {
@@ -1722,10 +2112,16 @@
 
             uniqueDates.forEach(date => {
                 // レート適用がオフの日付はElo計算をスキップする
-                if (disabledDates.includes(date)) return;
+                if (disabledDates.includes(date)) {
+                    recordRatingSnapshot(date);
+                    return;
+                }
 
                 const dayScores = roundsByDate[date] || [];
-                if (dayScores.length < 2) return;
+                if (dayScores.length < 2) {
+                    recordRatingSnapshot(date);
+                    return;
+                }
 
                 const sampleSeason = dayScores[0].season || 1;
 
@@ -1795,6 +2191,7 @@
                         dailyDeltas[date][id] = (dailyDeltas[date][id] || 0) + delta;
                     });
                 });
+                recordRatingSnapshot(date);
             });
 
             Object.keys(runningRatings).forEach(id => {
@@ -1832,7 +2229,7 @@ Object.keys(statsMap).forEach(id => {
                 processedMembers = processedMembers.filter(m => m.division === filterDiv);
             }
 
-            return { processedMembers, dailyDeltas, roundsByDate, filteredScores };
+            return { processedMembers, dailyDeltas, roundsByDate, filteredScores, ratingHistoryByMember };
         }
 
         function renderAll() {
@@ -1840,6 +2237,8 @@ Object.keys(statsMap).forEach(id => {
             window.renderLeaderboard();
             window.renderScoresList();
             window.renderMembersGrid();
+            if (!document.getElementById('sec-monthly-awards').classList.contains('hidden')) window.renderAchievementsTab();
+            if (!document.getElementById('sec-team-matches').classList.contains('hidden')) renderTeamMatchEvents();
             renderMyPage();
             if (!document.getElementById('sec-analytics').classList.contains('hidden')) {
                 renderChartsAndHdcpTable();
@@ -2166,6 +2565,38 @@ Object.keys(statsMap).forEach(id => {
             return result;
         }
 
+        // 対戦履歴から現在の連勝・連敗と過去の最長記録を算出
+        function getRivalStreakStats(stats) {
+            const ascending = [...(stats?.matches || [])].sort((a, b) => (a.date || '').localeCompare(b.date || '') || a.timestamp - b.timestamp);
+            let maxWin = 0, maxLoss = 0, runningWin = 0, runningLoss = 0;
+            ascending.forEach(match => {
+                if (match.outcome === 'W') {
+                    runningWin++;
+                    runningLoss = 0;
+                    maxWin = Math.max(maxWin, runningWin);
+                } else if (match.outcome === 'L') {
+                    runningLoss++;
+                    runningWin = 0;
+                    maxLoss = Math.max(maxLoss, runningLoss);
+                } else {
+                    runningWin = 0;
+                    runningLoss = 0;
+                }
+            });
+            let current = { type: 'none', count: 0 };
+            if (ascending.length) {
+                const latest = ascending[ascending.length - 1].outcome;
+                if (latest === 'W' || latest === 'L') {
+                    let count = 0;
+                    for (let i = ascending.length - 1; i >= 0 && ascending[i].outcome === latest; i--) count++;
+                    current = { type: latest, count };
+                } else {
+                    current = { type: 'D', count: 0 };
+                }
+            }
+            return { current, maxWin, maxLoss };
+        }
+
         // 自分と選択中のライバルの現在の実力を比較して表示
         function renderRivalComparison(myMember, rivalMember) {
             const selfName = document.getElementById('detail-comparison-self-name');
@@ -2244,6 +2675,150 @@ Object.keys(statsMap).forEach(id => {
             }).join('');
         }
 
+        function calculateRivalPrediction(myMember, rivalMember, stats) {
+            // 各部員のスコアを日付・登録時刻の新しい順に並べ、直近10ラウンドを抽出
+            const getScoreSummary = member => {
+                const timestampOf = score => {
+                    if (score.createdAt?.toMillis) return score.createdAt.toMillis();
+                    if (score.createdAt?.seconds) return score.createdAt.seconds * 1000;
+                    const dateTimestamp = new Date(`${score.date || ''}T00:00:00`).getTime();
+                    return Number.isFinite(dateTimestamp) ? dateTimestamp : 0;
+                };
+                const validScores = (Array.isArray(member?.allScores) ? member.allScores : [])
+                    .map(score => ({ total: Number(score.totalScore), timestamp: timestampOf(score) }))
+                    .filter(score => Number.isFinite(score.total) && score.total > 0)
+                    .sort((a, b) => b.timestamp - a.timestamp);
+                const allValues = validScores.map(score => score.total);
+                const recentValues = validScores.slice(0, 10).map(score => score.total);
+                const average = values => values.length
+                    ? values.reduce((sum, value) => sum + value, 0) / values.length
+                    : null;
+                return {
+                    allAverage: average(allValues),
+                    recentAverage: average(recentValues),
+                    allCount: allValues.length,
+                    recentCount: recentValues.length
+                };
+            };
+
+            const myScoreSummary = getScoreSummary(myMember);
+            const rivalScoreSummary = getScoreSummary(rivalMember);
+            const myAverage = myScoreSummary.allAverage;
+            const rivalAverage = rivalScoreSummary.allAverage;
+            const myRecentAverage = myScoreSummary.recentAverage;
+            const rivalRecentAverage = rivalScoreSummary.recentAverage;
+
+            const myRate = myMember?.rating === null || myMember?.rating === undefined || myMember?.rating === '' ? null : Number(myMember.rating);
+            const rivalRate = rivalMember?.rating === null || rivalMember?.rating === undefined || rivalMember?.rating === '' ? null : Number(rivalMember.rating);
+            const hasRate = myRate !== null && rivalRate !== null && Number.isFinite(myRate) && Number.isFinite(rivalRate);
+            const hasRecentAverage = myRecentAverage !== null && rivalRecentAverage !== null;
+            const hasAverage = myAverage !== null && rivalAverage !== null;
+
+            const matches = stats?.matches || [];
+            // 過去対戦がない場合は中立の50%。少数対戦による偏りを避けるため2勝・2敗相当で平滑化
+            const h2hWin = matches.length
+                ? (stats.wins + stats.draws * 0.5 + 2) / (matches.length + 4)
+                : 0.5;
+
+            // 各要素を「自分が勝つ確率」に変換
+            const eloWin = hasRate
+                ? 1 / (1 + Math.pow(10, (rivalRate - myRate) / 400))
+                : null;
+            // スコアは少ない方が有利。約4.5打差で明確な差が出るロジスティック曲線
+            const recentScoreWin = hasRecentAverage
+                ? 1 / (1 + Math.exp(-(rivalRecentAverage - myRecentAverage) / 4.5))
+                : null;
+            const overallScoreWin = hasAverage
+                ? 1 / (1 + Math.exp(-(rivalAverage - myAverage) / 4.5))
+                : null;
+
+            // 基準配分：レート40%、直近10ラウンド平均25%、通算平均10%、直接対決25%
+            // 両者のデータが揃っていない要素は除外し、利用可能な要素だけで重みを再配分
+            const components = [
+                { key: 'rate', value: eloWin, weight: 0.40 },
+                { key: 'recent10', value: recentScoreWin, weight: 0.25 },
+                { key: 'overall', value: overallScoreWin, weight: 0.10 },
+                { key: 'headToHead', value: h2hWin, weight: 0.25 }
+            ].filter(component => component.value !== null);
+            const totalWeight = components.reduce((sum, component) => sum + component.weight, 0);
+            const decisiveWin = totalWeight
+                ? components.reduce((sum, component) => sum + component.value * component.weight, 0) / totalWeight
+                : 0.5;
+            const weightsUsed = {};
+            components.forEach(component => {
+                weightsUsed[component.key] = Math.round(component.weight / totalWeight * 1000) / 10;
+            });
+
+            // 引き分け確率は実際の直接対決での引き分け率と、直近の平均スコア差を中心に算出
+            const drawRate = matches.length ? stats.draws / matches.length : 0.1;
+            const drawScoreGap = hasRecentAverage
+                ? Math.abs(myRecentAverage - rivalRecentAverage)
+                : hasAverage ? Math.abs(myAverage - rivalAverage) : 0;
+            const drawProbability = Math.max(
+                0.05,
+                Math.min(0.26, 0.06 + drawRate * 0.35 + 0.10 * Math.exp(-drawScoreGap / 3.5))
+            );
+
+            const winRaw = (1 - drawProbability) * decisiveWin;
+            const lossRaw = (1 - drawProbability) * (1 - decisiveWin);
+            const totalProbability = winRaw + drawProbability + lossRaw;
+            const win = Math.round(winRaw / totalProbability * 1000) / 10;
+            const draw = Math.round(drawProbability / totalProbability * 1000) / 10;
+            const loss = Number((100 - win - draw).toFixed(1));
+
+            return {
+                win,
+                draw,
+                loss,
+                myAverage,
+                rivalAverage,
+                myRecentAverage,
+                rivalRecentAverage,
+                myRecentCount: myScoreSummary.recentCount,
+                rivalRecentCount: rivalScoreSummary.recentCount,
+                matches: matches.length,
+                weightsUsed,
+                modelVersion: 'recency-weighted-v2'
+            };
+        }
+
+        function getPredictedOutcome(probabilities) {
+            if (!probabilities) return null;
+            const values = [
+                { outcome: 'W', value: probabilities.win },
+                { outcome: 'D', value: probabilities.draw },
+                { outcome: 'L', value: probabilities.loss }
+            ];
+            return values.sort((a, b) => b.value - a.value)[0].outcome;
+        }
+
+        function renderRivalPrediction(member, myMember, stats) {
+            // 保存は行わず、現在のスコア・レート・直接対決データから毎回予想を算出して表示する。
+            const probabilities = calculateRivalPrediction(myMember, member, stats);
+            // 小数丸め後の合計を100.0%にそろえる
+            probabilities.loss = Number((100 - probabilities.win - probabilities.draw).toFixed(1));
+            document.getElementById('prediction-win').innerText = `${probabilities.win.toFixed(1)}%`;
+            document.getElementById('prediction-draw').innerText = `${probabilities.draw.toFixed(1)}%`;
+            document.getElementById('prediction-loss').innerText = `${probabilities.loss.toFixed(1)}%`;
+
+            const recentText = probabilities.myRecentAverage === null || probabilities.rivalRecentAverage === null
+                ? '直近スコアの比較データが不足しています。'
+                : `直近10ラウンドの平均はあなた ${probabilities.myRecentAverage.toFixed(1)}（${probabilities.myRecentCount}件）、${member.name} ${probabilities.rivalRecentAverage.toFixed(1)}（${probabilities.rivalRecentCount}件）。`;
+            const overallText = probabilities.myAverage === null || probabilities.rivalAverage === null
+                ? '通算平均の比較データは不足しています。'
+                : `通算平均はあなた ${probabilities.myAverage.toFixed(1)}、${member.name} ${probabilities.rivalAverage.toFixed(1)}。`;
+            const weightLabels = {
+                rate: 'レート',
+                recent10: '直近10R平均',
+                overall: '通算平均',
+                headToHead: '直接対決'
+            };
+            const weightText = Object.entries(probabilities.weightsUsed || {})
+                .map(([key, value]) => `${weightLabels[key] || key} ${value}%`)
+                .join('・');
+            document.getElementById('prediction-explanation').innerText = `${recentText} ${overallText} 直接対決 ${probabilities.matches}件。今回の配分：${weightText}。データ不足の項目は除外し、残りの重みを再配分しています。確率は参考値であり、コース難易度や当日の調子を完全に反映するものではありません。`;
+        }
+
         function renderRivalryDetail(member, myMember) {
             const section = document.getElementById('detail-rivalry-section');
             const isRival = currentUserUid && getCurrentRivalIds().includes(member.id);
@@ -2255,6 +2830,12 @@ Object.keys(statsMap).forEach(id => {
             section.classList.remove('hidden');
             renderRivalComparison(myMember, member);
             const stats = getHeadToHeadStats(member.id);
+            const streaks = getRivalStreakStats(stats);
+            const currentStreakText = streaks.current.type === 'W' ? `${streaks.current.count}連勝` : streaks.current.type === 'L' ? `${streaks.current.count}連敗` : streaks.current.type === 'D' ? '直近は引き分け' : '対戦記録なし';
+            document.getElementById('detail-rival-current-streak').innerText = currentStreakText;
+            document.getElementById('detail-rival-max-win-streak').innerText = `${streaks.maxWin}連勝`;
+            document.getElementById('detail-rival-max-loss-streak').innerText = `${streaks.maxLoss}連敗`;
+            renderRivalPrediction(member, myMember, stats);
             document.getElementById('detail-rivalry-opponent').innerText = `あなた vs ${member.name}（通算）`;
             document.getElementById('detail-rivalry-total').innerText = stats.matches.length;
             document.getElementById('detail-rivalry-wins').innerText = stats.wins;
@@ -2314,7 +2895,9 @@ Object.keys(statsMap).forEach(id => {
             }
         }
 
+
         window.openMemberDetailModal = (memberId) => {
+            currentDetailMemberId = memberId;
             const activeSeason = (systemSettings.currentSeason || 1).toString();
             const { processedMembers } = calculateEloAndStats(activeSeason, 'all');
             const member = processedMembers.find(m => m.id === memberId);
@@ -2537,6 +3120,8 @@ Object.keys(statsMap).forEach(id => {
                 const isImage = m.photoUrl && m.photoUrl.startsWith('http');
                 const avatarHtml = isImage ? `<img src="${m.photoUrl}" class="w-10 h-10 rounded-full object-cover border border-slate-300 shrink-0">` : `<div class="w-10 h-10 bg-emerald-100 text-emerald-800 rounded-full flex items-center justify-center font-bold text-lg shrink-0">${m.photoUrl || '⛳'}</div>`;
                 const rivalryStats = membersViewMode === 'rivals' ? getHeadToHeadStats(m.id) : null;
+                const rivalryStreaks = rivalryStats ? getRivalStreakStats(rivalryStats) : null;
+                const currentRivalStreakText = !rivalryStreaks ? '' : rivalryStreaks.current.type === 'W' ? `${rivalryStreaks.current.count}連勝中` : rivalryStreaks.current.type === 'L' ? `${rivalryStreaks.current.count}連敗中` : rivalryStreaks.current.type === 'D' ? '直近は引き分け' : '対戦なし';
                 const rivalrySummary = rivalryStats ? `
                     <div class="mt-3 pt-3 border-t border-slate-100 space-y-2">
                         <div class="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
@@ -2550,7 +3135,11 @@ Object.keys(statsMap).forEach(id => {
                             <div class="text-xs font-bold text-slate-600 whitespace-nowrap">${rivalryStats.matches.length}戦・${rivalryStats.draws}分</div>
                         </div>
                         ${buildRivalryOutcomeBar(rivalryStats, true)}
-                        <div class="flex justify-end items-center">
+                        <div class="flex flex-wrap justify-between items-center gap-1">
+                            <div class="flex flex-wrap gap-2 text-[10px] font-bold">
+                                <span class="bg-rose-50 text-rose-700 rounded-md px-2 py-1">現在：${currentRivalStreakText}</span>
+                                <span class="bg-amber-50 text-amber-800 rounded-md px-2 py-1">最多：${rivalryStreaks.maxWin}連勝</span>
+                            </div>
                             <span class="font-extrabold text-emerald-700 text-base">${rivalryStats.winRate === null ? '--' : `${rivalryStats.winRate}%`}<span class="text-[10px] font-bold ml-1">勝率</span></span>
                         </div>
                     </div>` : '';
@@ -2578,6 +3167,1071 @@ Object.keys(statsMap).forEach(id => {
                 `;
             }).join('');
         };
+
+        // ----------------------------------------------------
+        // 🏅 月間称号・バッジ・チーム対抗戦
+        // ----------------------------------------------------
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+        }
+
+        function getAvailableMonthKeys() {
+            return [...new Set(scoresData.map(score => String(score.date || '').slice(0, 7)).filter(value => /^\d{4}-\d{2}$/.test(value)))].sort((a, b) => b.localeCompare(a));
+        }
+
+        function scoreCreatedTimestamp(score) {
+            if (score.createdAt?.toMillis) return score.createdAt.toMillis();
+            if (score.createdAt?.seconds) return score.createdAt.seconds * 1000;
+            return new Date(`${score.date || ''}T00:00:00`).getTime() || 0;
+        }
+
+        // 当月のレート増加量 = プレー日順で再計算したEloの日別増減量の合計。
+        // 月初時点から月末時点までの「当月中に発生した変動」だけを集計し、
+        // シーズン更新時の3000リセットは成績による増減ではないため含めない。
+        function getMonthlyRateGrowth(month, monthScores) {
+            const [year, monthNumber] = month.split('-').map(Number);
+            const monthStart = `${month}-01`;
+            const lastDay = new Date(year, monthNumber, 0).getDate();
+            const monthEnd = `${month}-${String(lastDay).padStart(2, '0')}`;
+            const growth = {};
+            const seasons = new Set();
+
+            monthScores.forEach(score => {
+                if (!score.memberId) return;
+                growth[score.memberId] = growth[score.memberId] || 0;
+                seasons.add(String(score.season || 1));
+            });
+
+            for (const season of seasons) {
+                if (!ratingHistoryCache.has(season)) {
+                    const calculation = calculateEloAndStats(season, 'all');
+                    // dailyDeltasはレート計算本体が実際に適用した変動値。
+                    ratingHistoryCache.set(season, calculation.dailyDeltas || {});
+                }
+                const dailyDeltas = ratingHistoryCache.get(season) || {};
+                Object.entries(dailyDeltas).forEach(([date, memberDeltas]) => {
+                    if (date < monthStart || date > monthEnd) return;
+                    Object.entries(memberDeltas || {}).forEach(([memberId, delta]) => {
+                        if (Object.prototype.hasOwnProperty.call(growth, memberId)) {
+                            growth[memberId] += Number(delta) || 0;
+                        }
+                    });
+                });
+            }
+            return growth;
+        }
+
+        function getMonthlyMvpNominees(month, monthScores, rateGrowth) {
+            const memberMap = new Map(membersData.map(member => [member.id, member]));
+            const scoresByMember = new Map();
+            monthScores.forEach(score => {
+                if (!memberMap.has(score.memberId)) return;
+                if (!scoresByMember.has(score.memberId)) scoresByMember.set(score.memberId, []);
+                scoresByMember.get(score.memberId).push(score);
+            });
+
+            const candidates = [];
+            scoresByMember.forEach((scores, memberId) => {
+                // MVP候補は月間2ラウンド以上。単発の好スコアだけで選ばれないようにする。
+                if (scores.length < 2) return;
+                const member = memberMap.get(memberId);
+                const numericScores = scores.map(score => Number(score.totalScore)).filter(Number.isFinite);
+                if (numericScores.length < 2) return;
+                const averageScore = numericScores.reduce((sum, value) => sum + value, 0) / numericScores.length;
+                const bestScore = Math.min(...numericScores);
+                const variance = numericScores.reduce((sum, value) => sum + Math.pow(value - averageScore, 2), 0) / numericScores.length;
+                const consistency = Math.sqrt(variance);
+                const latestScore = [...scores].sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')) || scoreCreatedTimestamp(a) - scoreCreatedTimestamp(b)).slice(-1)[0];
+                const season = String(latestScore?.season || 1);
+                const division = String(member.divisionHistory?.[`season_${season}`] || (season === String(systemSettings.currentSeason || 1) ? member.division : '') || '3');
+                candidates.push({
+                    id: memberId,
+                    name: member.name || '部員',
+                    grade: member.grade || '',
+                    division,
+                    rounds: numericScores.length,
+                    averageScore,
+                    bestScore,
+                    consistency,
+                    rateGrowth: Number(rateGrowth[memberId] || 0),
+                    componentScores: {}
+                });
+            });
+
+            if (!candidates.length) return [];
+
+            // 各指標をDivision内の順位（0〜100点）に変換。
+            // これによりDiv1だけ／Div3だけが有利になりすぎない形で全Divisionから比較する。
+            const assignDivisionPercentiles = (metric, higherIsBetter) => {
+                const groups = new Map();
+                candidates.forEach(candidate => {
+                    if (!groups.has(candidate.division)) groups.set(candidate.division, []);
+                    groups.get(candidate.division).push(candidate);
+                });
+                groups.forEach(group => {
+                    group.forEach(candidate => {
+                        if (group.length === 1) {
+                            candidate.componentScores[metric] = 50;
+                            return;
+                        }
+                        const value = candidate[metric];
+                        const worseCount = group.filter(other => higherIsBetter ? other[metric] < value : other[metric] > value).length;
+                        const equalCount = group.filter(other => other[metric] === value).length;
+                        const midRankFromWorst = worseCount + (equalCount - 1) / 2;
+                        candidate.componentScores[metric] = (midRankFromWorst / (group.length - 1)) * 100;
+                    });
+                });
+            };
+
+            assignDivisionPercentiles('averageScore', false);
+            assignDivisionPercentiles('rateGrowth', true);
+            assignDivisionPercentiles('bestScore', false);
+            assignDivisionPercentiles('rounds', true);
+            assignDivisionPercentiles('consistency', false);
+
+            candidates.forEach(candidate => {
+                const points = candidate.componentScores;
+                candidate.mvpScore =
+                    points.averageScore * 0.30 +
+                    points.rateGrowth * 0.30 +
+                    points.bestScore * 0.20 +
+                    points.rounds * 0.10 +
+                    points.consistency * 0.10;
+                candidate.details = `平均${candidate.averageScore.toFixed(1)}打／ベスト${candidate.bestScore}打／レート${candidate.rateGrowth >= 0 ? '+' : ''}${candidate.rateGrowth}／${candidate.rounds}R／安定度SD ${candidate.consistency.toFixed(1)}`;
+            });
+
+            candidates.sort((a, b) =>
+                b.mvpScore - a.mvpScore ||
+                b.rateGrowth - a.rateGrowth ||
+                a.averageScore - b.averageScore ||
+                b.rounds - a.rounds ||
+                a.name.localeCompare(b.name, 'ja')
+            );
+            return candidates.slice(0, 5).map(candidate => ({
+                id: candidate.id,
+                name: candidate.name,
+                grade: candidate.grade,
+                division: candidate.division,
+                score: Number(candidate.mvpScore.toFixed(1)),
+                value: `${candidate.mvpScore.toFixed(1)} pt`,
+                details: candidate.details,
+                badgeId: `${month}_mvp_nominee_${candidate.id}`
+            }));
+        }
+
+        function getPreviousMonthKey(month) {
+            const [year, monthNumber] = month.split('-').map(Number);
+            const previous = new Date(year, monthNumber - 2, 1);
+            return `${previous.getFullYear()}-${String(previous.getMonth() + 1).padStart(2, '0')}`;
+        }
+
+        function getConsecutiveNominationStreak(memberId, month) {
+            let streak = 1;
+            let cursor = getPreviousMonthKey(month);
+            const publicationByMonth = new Map(monthlyAwardsData.map(publication => [publication.month || publication.id, publication]));
+            while (true) {
+                const publication = publicationByMonth.get(cursor);
+                if (!publication) break;
+                const nomineeAward = (publication.awards || []).find(award => award.type === 'mvp_nominees');
+                const wasNominated = (nomineeAward?.winners || []).some(winner => winner.id === memberId);
+                if (!wasNominated) break;
+                streak += 1;
+                cursor = getPreviousMonthKey(cursor);
+            }
+            return streak;
+        }
+
+        function getMonthlyAwards(month) {
+            if (!month) return [];
+            if (monthlyAwardsCache.has(month)) return monthlyAwardsCache.get(month);
+            const memberMap = new Map(membersData.map(member => [member.id, member]));
+            const monthScores = scoresData.filter(score =>
+                String(score.date || '').startsWith(`${month}-`) &&
+                Number.isFinite(Number(score.totalScore)) &&
+                memberMap.has(score.memberId)
+            );
+            if (!monthScores.length) {
+                monthlyAwardsCache.set(month, []);
+                return [];
+            }
+
+            const result = [];
+            const addAward = (type, title, icon, theme, valueLabel, winners) => {
+                result.push({
+                    type, title, icon, theme,
+                    winners: winners.map(memberId => ({
+                        ...memberMap.get(memberId),
+                        value: valueLabel(memberId),
+                        badgeId: `${month}_${type}_${memberId}`,
+                        month
+                    }))
+                });
+            };
+
+            // 月間MVP：平均スコア30%、当月レート増加30%、ベストスコア20%、ラウンド数10%、安定度10%。
+            const growth = getMonthlyRateGrowth(month, monthScores);
+            const nominees = getMonthlyMvpNominees(month, monthScores, growth);
+            result.push({
+                type: 'mvp_nominees',
+                title: '月間MVPノミネート',
+                icon: '⭐',
+                theme: 'medal-indigo',
+                winners: nominees
+            });
+
+            if (nominees.length) {
+                const mvp = nominees[0];
+                result.push({
+                    type: 'mvp',
+                    title: '月間MVP',
+                    icon: '👑',
+                    theme: 'medal-gold',
+                    winners: [{
+                        ...memberMap.get(mvp.id),
+                        value: `${mvp.score.toFixed(1)} pt／${mvp.division}部ノミネート`,
+                        badgeId: `${month}_mvp_${mvp.id}`,
+                        month
+                    }]
+                });
+            } else {
+                result.push({ type: 'mvp', title: '月間MVP', icon: '👑', theme: 'medal-gold', winners: [] });
+            }
+
+            const consecutiveWinners = nominees.map(nominee => ({ ...nominee, streak: getConsecutiveNominationStreak(nominee.id, month) }))
+                .filter(nominee => nominee.streak >= 2)
+                .map(nominee => ({
+                    ...memberMap.get(nominee.id),
+                    value: `${nominee.streak}か月連続ノミネート`,
+                    badgeId: `${month}_consecutive_nomination_${nominee.id}`,
+                    month
+                }));
+            result.push({
+                type: 'consecutive_nomination',
+                title: '連続ノミネート賞',
+                icon: '🌟',
+                theme: 'medal-indigo',
+                winners: consecutiveWinners
+            });
+
+            const bestByMember = new Map();
+            monthScores.forEach(score => {
+                const value = Number(score.totalScore);
+                const current = bestByMember.get(score.memberId);
+                if (current === undefined || value < current) bestByMember.set(score.memberId, value);
+            });
+            const bestValue = Math.min(...bestByMember.values());
+            addAward('best_score', '月間ベストスコア王', '🏆', 'medal-gold', id => `${bestByMember.get(id)}打`, [...bestByMember].filter(([, value]) => value === bestValue).map(([id]) => id));
+
+            const roundCounts = new Map();
+            monthScores.forEach(score => roundCounts.set(score.memberId, (roundCounts.get(score.memberId) || 0) + 1));
+            const maxRounds = Math.max(...roundCounts.values());
+            addAward('most_rounds', '最多ラウンド賞', '⛳', 'medal-emerald', id => `${roundCounts.get(id)}ラウンド`, [...roundCounts].filter(([, value]) => value === maxRounds).map(([id]) => id));
+
+            const growthIds = [...new Set(monthScores.map(score => score.memberId))];
+            const maxGrowth = Math.max(...growthIds.map(id => growth[id] || 0));
+            if (growthIds.length && maxGrowth > 0) {
+                addAward('growth', '急成長賞', '🚀', 'medal-violet', id => `${growth[id] > 0 ? '+' : ''}${growth[id]} Rate`, growthIds.filter(id => (growth[id] || 0) === maxGrowth));
+            } else {
+                result.push({ type: 'growth', title: '急成長賞', icon: '🚀', theme: 'medal-violet', winners: [] });
+            }
+
+            monthlyAwardsCache.set(month, result);
+            return result;
+        }
+
+        function buildAchievementBadgeHTML(badge, mini = false, extraClass = '') {
+            const secondaryText = badge.subtitle || [badge.month, badge.value].filter(Boolean).join(' ・ ');
+            return `<div class="achievement-medal ${badge.theme || 'medal-silver'} ${mini ? 'mini' : ''} ${extraClass}" title="${escapeHtml(badge.title)} ${escapeHtml(badge.month || '')}">
+                <div class="medal-icon">${badge.icon || '🏅'}</div>
+                <div class="medal-title">${escapeHtml(badge.title)}</div>
+                <div class="medal-month">${escapeHtml(secondaryText)}</div>
+            </div>`;
+        }
+
+        function getAwardDisplayCopy(award) {
+            const copy = {
+                mvp: { subtitle: 'MVP CHAMPION', description: '全Divisionから選ばれたノミネート者のうち、総合評価1位。', tag: '最高栄誉' },
+                mvp_nominees: { subtitle: 'MVP NOMINEES', description: '全Divisionから、月間成績を総合評価して選ばれた候補者。', tag: 'MVP候補' },
+                consecutive_nomination: { subtitle: 'CONSECUTIVE STAR', description: '2か月以上連続で月間MVP候補に選ばれた部員。', tag: '継続の証' },
+                best_score: { subtitle: 'SCORE KING', description: 'その月に提出されたスコアのうち、最も良いベストスコアを記録。', tag: 'スコア王' },
+                most_rounds: { subtitle: 'ROUND MASTER', description: 'その月のラウンド提出数が最も多かった部員。', tag: '最多記録' },
+                growth: { subtitle: 'RISING STAR', description: 'その月の実際のレート増加量が最も大きかった部員。', tag: '急成長' }
+            };
+            if (award.type === 'season_division_podium') {
+                const rank = Number(award.rank);
+                return {
+                    subtitle: `DIVISION ${award.division || ''} ・ ${rank === 1 ? 'CHAMPION' : rank === 2 ? 'RUNNER-UP' : '3RD PLACE'}`,
+                    description: `season ${award.season || ''} のDivision ${award.division || ''}最終順位${rank}位。`,
+                    tag: rank === 1 ? '優勝' : rank === 2 ? '準優勝' : '3位'
+                };
+            }
+            return copy[award.type] || { subtitle: 'SPECIAL AWARD', description: '月間の活躍をたたえる称号。', tag: '受賞' };
+        }
+
+        function renderAwardWinnerChips(winners) {
+            if (!winners.length) return '<span class="text-xs text-slate-400">該当者なし</span>';
+            return `<div class="award-winner-list">${winners.map(winner => `
+                <span class="award-winner-chip">${escapeHtml(winner.name || '部員')}${winner.value ? ` ・ ${escapeHtml(winner.value)}` : ''}</span>
+            `).join('')}</div>`;
+        }
+
+        function renderMvpNomineeDetails(nominees) {
+            if (!nominees.length) return '<p class="text-xs text-slate-400 mt-2">月間2ラウンド以上の候補者がいません。</p>';
+            return `<div class="award-nominee-list">${nominees.map((nominee, index) => `
+                <div class="award-nominee-item">
+                    <div class="award-nominee-name">${index + 1}. ${escapeHtml(nominee.name || '部員')} <span class="text-emerald-700">（Division ${escapeHtml(nominee.division || '-')}・${escapeHtml(nominee.value || '')}）</span></div>
+                    <div class="award-nominee-detail">${escapeHtml(nominee.details || '')}</div>
+                </div>
+            `).join('')}</div>`;
+        }
+
+        function getEarnedBadgesForMember(memberId) {
+            const badges = [];
+            monthlyAwardsData.forEach(publication => {
+                const month = publication.month || publication.id;
+                (publication.awards || []).forEach(award => {
+                    if (award.type === 'mvp_nominees') return;
+                    const winner = (award.winners || []).find(item => item.id === memberId);
+                    if (winner) badges.push({
+                        id: winner.badgeId || `${month}_${award.type}_${memberId}`,
+                        title: award.title, icon: award.icon, theme: award.theme,
+                        month, value: winner.value
+                    });
+                });
+            });
+
+            // シーズンDivision表彰もマイページで装備できるようにする。
+            const seasonRecords = systemSettings.seasonAwards || {};
+            Object.entries(seasonRecords).forEach(([seasonKey, record]) => {
+                (record?.awards || []).forEach(award => {
+                    const winner = (award.winners || []).find(item => item.id === memberId);
+                    if (!winner) return;
+                    badges.push({
+                        id: winner.badgeId || `${seasonKey}_${award.type}_${memberId}`,
+                        title: award.title, icon: award.icon, theme: award.theme,
+                        month: `season ${record.season || seasonKey.replace('season_', '')}`,
+                        value: winner.value
+                    });
+                });
+            });
+            return badges;
+        }
+
+        function renderMyPageBadges(member) {
+            const earned = getEarnedBadgesForMember(member.id);
+            const equippedIds = Array.isArray(member.equippedBadges) ? member.equippedBadges : [];
+            const equipped = earned.filter(badge => equippedIds.includes(badge.id)).slice(0, 3);
+            const display = document.getElementById('mypage-equipped-badges');
+            const options = document.getElementById('mypage-badge-options');
+            display.innerHTML = equipped.length
+                ? equipped.map(badge => buildAchievementBadgeHTML(badge, true)).join('')
+                : '<p class="col-span-3 text-[11px] text-slate-400 text-center">獲得した称号をここに飾れます</p>';
+            if (!earned.length) {
+                options.innerHTML = '<p class="col-span-full text-xs text-slate-400 bg-slate-50 rounded-lg p-3 text-center">月間称号・シーズン表彰で獲得したバッジを装備できます。</p>';
+                return;
+            }
+            options.innerHTML = earned.map(badge => `
+                <label class="relative flex items-start gap-2 border border-slate-200 rounded-lg p-2 cursor-pointer hover:border-emerald-300 bg-white">
+                    <input type="checkbox" name="mypage-equipped-badge" value="${escapeHtml(badge.id)}" ${equippedIds.includes(badge.id) ? 'checked' : ''} onchange="window.limitEquippedBadges(this)" class="mt-1 accent-emerald-600 shrink-0">
+                    <div class="min-w-0 flex-1">${buildAchievementBadgeHTML(badge, true)}</div>
+                </label>`).join('');
+        }
+
+        window.limitEquippedBadges = (input) => {
+            const checked = document.querySelectorAll('input[name="mypage-equipped-badge"]:checked');
+            if (checked.length > 3) {
+                input.checked = false;
+                window.showToast('装備できるバッジは最大3個です');
+            }
+        };
+
+        const TEAM_MATCH_RULES = {
+            daily_average: '当日のスコア平均',
+            daily_net_average: '（当日のスコア－ハンディキャップ）の平均',
+            // 旧バージョンで作成された大会の表示・集計互換用
+            member_best_average: '旧ルール：各部員の当日ベストスコア平均',
+            member_average: '旧ルール：各部員の当日平均スコア平均',
+            total_strokes: '旧ルール：全ラウンドの合計打数'
+        };
+        const TEAM_MATCH_TEAM_NAMES = [
+            'Green Team', 'Blue Team', 'Gold Team', 'Purple Team', 'Red Team',
+            'Orange Team', 'Navy Team', 'Pink Team', 'Black Team', 'White Team'
+        ];
+        const TEAM_MATCH_TEAM_COLORS = [
+            '#059669', '#2563eb', '#d97706', '#9333ea', '#dc2626',
+            '#ea580c', '#1e3a8a', '#db2777', '#334155', '#64748b'
+        ];
+
+        function formatMonthKey(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        }
+
+        function serializeMonthlyAwards(month) {
+            return getMonthlyAwards(month).map(award => ({
+                type: award.type,
+                title: award.title,
+                icon: award.icon,
+                theme: award.theme,
+                winners: (award.winners || []).map(winner => ({
+                    id: winner.id,
+                    name: winner.name,
+                    value: winner.value,
+                    division: winner.division || null,
+                    score: Number.isFinite(Number(winner.score)) ? Number(winner.score) : null,
+                    details: winner.details || null,
+                    badgeId: winner.badgeId || `${month}_${award.type}_${winner.id}`
+                }))
+            }));
+        }
+
+        // 月初に前月分を一度だけ確定。ブラウザ方式のため、月初以降に誰かがサイトを開いた時に実行される。
+        async function maybePublishPreviousMonthAwards() {
+            if (!currentUserUid || !membersSnapshotReady || !scoresSnapshotReady || !monthlyAwardsSnapshotReady || publishingPreviousMonth) return;
+            const jstParts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit' }).formatToParts(new Date());
+            const jstYear = Number(jstParts.find(part => part.type === 'year')?.value);
+            const jstMonth = Number(jstParts.find(part => part.type === 'month')?.value);
+            const previousMonth = formatMonthKey(new Date(jstYear, jstMonth - 2, 1));
+            if (monthlyAwardsData.some(item => (item.month || item.id) === previousMonth)) return;
+            publishingPreviousMonth = true;
+            try {
+                const awards = serializeMonthlyAwards(previousMonth);
+                await setDoc(doc(db, 'monthlyAwards', previousMonth), {
+                    month: previousMonth,
+                    awards,
+                    publishedAt: serverTimestamp(),
+                    publicationRule: 'published_on_or_after_day_1_for_previous_month'
+                });
+                window.showToast(`${previousMonth}分の月間称号を発表しました！`);
+            } catch (err) {
+                console.warn('月間称号の発表に失敗しました', err);
+            } finally {
+                publishingPreviousMonth = false;
+            }
+        }
+
+        window.addEventListener('focus', maybePublishPreviousMonthAwards);
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) maybePublishPreviousMonthAwards();
+        });
+
+        window.renderAchievementsTab = () => {
+            const monthSelect = document.getElementById('achievement-month');
+            const awardsGrid = document.getElementById('monthly-awards-grid');
+            const sortedPublications = [...monthlyAwardsData].sort((a, b) => String(b.month || b.id).localeCompare(String(a.month || a.id)));
+            const previousValue = monthSelect.value;
+            monthSelect.innerHTML = sortedPublications.length
+                ? sortedPublications.map(item => {
+                    const month = item.month || item.id;
+                    return `<option value="${escapeHtml(month)}">${escapeHtml(month)}分</option>`;
+                }).join('')
+                : '<option value="">発表済みの称号はまだありません</option>';
+            const selectedMonth = sortedPublications.some(item => (item.month || item.id) === previousValue)
+                ? previousValue
+                : (sortedPublications[0] ? (sortedPublications[0].month || sortedPublications[0].id) : '');
+            monthSelect.value = selectedMonth;
+            const publication = sortedPublications.find(item => (item.month || item.id) === selectedMonth);
+            document.getElementById('monthly-awards-publication-label').innerText = publication
+                ? `${selectedMonth}分・毎月1日発表済み`
+                : '毎月1日に先月分を発表';
+            const awards = publication?.awards || [];
+            if (!awards.length) {
+                awardsGrid.innerHTML = '<div class="col-span-full rounded-xl bg-slate-50 text-center text-sm text-slate-400 py-8">月間称号は毎月1日に前月分を発表します。まだ発表済みの称号はありません。</div>';
+            } else {
+                awardsGrid.innerHTML = awards.map(award => {
+                    const winners = award.winners || [];
+                    const copy = getAwardDisplayCopy(award);
+                    const badge = {
+                        title: award.type === 'mvp_nominees' ? '月間MVPノミネート' : award.title,
+                        icon: award.icon || '🏅',
+                        theme: award.theme || 'medal-silver',
+                        subtitle: copy.subtitle,
+                        month: selectedMonth
+                    };
+                    const detailHtml = award.type === 'mvp_nominees'
+                        ? renderMvpNomineeDetails(winners)
+                        : renderAwardWinnerChips(winners);
+                    return `
+                        <article class="award-horizontal-row ${award.type === 'mvp' ? 'rounded-xl bg-amber-50/40 px-2 border border-amber-200' : ''}">
+                            <div>${buildAchievementBadgeHTML(badge, false, 'award-horizontal')}</div>
+                            <div class="award-info">
+                                <h4 class="award-info-title">${escapeHtml(award.title || '月間称号')}</h4>
+                                <p class="award-info-description">${escapeHtml(copy.description)}</p>
+                                <div class="mt-2"><span class="inline-flex rounded-full bg-emerald-100 text-emerald-800 px-2.5 py-1 text-[10px] font-extrabold">${escapeHtml(copy.tag)}</span></div>
+                                ${detailHtml}
+                            </div>
+                        </article>`;
+                }).join('');
+            }
+
+            // シーズンごとのDivision表彰。賞データは system/config に保存される。
+            const seasonSelect = document.getElementById('achievement-season');
+            const seasonGrid = document.getElementById('season-awards-grid');
+            const seasonLabel = document.getElementById('season-awards-publication-label');
+            const seasonRecords = systemSettings.seasonAwards || {};
+            const seasonEntries = Object.entries(seasonRecords).sort((a, b) =>
+                Number(b[1]?.season || String(b[0]).replace('season_', '')) -
+                Number(a[1]?.season || String(a[0]).replace('season_', ''))
+            );
+            const previousSeasonValue = seasonSelect.value;
+            seasonSelect.innerHTML = seasonEntries.length
+                ? seasonEntries.map(([key, record]) => {
+                    const number = record.season || String(key).replace('season_', '');
+                    return `<option value="${escapeHtml(key)}">season ${escapeHtml(number)}</option>`;
+                }).join('')
+                : '<option value="">表彰済みのシーズンはありません</option>';
+            seasonSelect.disabled = seasonEntries.length === 0;
+            const selectedSeasonKey = seasonEntries.some(([key]) => key === previousSeasonValue)
+                ? previousSeasonValue
+                : (seasonEntries[0]?.[0] || '');
+            seasonSelect.value = selectedSeasonKey;
+            const selectedSeasonRecord = selectedSeasonKey ? seasonRecords[selectedSeasonKey] : null;
+            const seasonNumber = selectedSeasonRecord?.season || (selectedSeasonKey ? selectedSeasonKey.replace('season_', '') : '');
+            seasonLabel.innerText = selectedSeasonRecord
+                ? `season ${seasonNumber} 終了時に授与・保存済み`
+                : 'シーズン更新時に各Divisionの1〜3位を表彰します。';
+
+            const seasonPodiumAwards = selectedSeasonRecord?.awards || [];
+            if (!seasonPodiumAwards.length) {
+                seasonGrid.innerHTML = '<div class="col-span-full rounded-xl bg-slate-50 text-center text-sm text-slate-400 py-8">シーズンを更新すると、各Divisionの優勝・準優勝・3位のバッジがここに表示されます。</div>';
+            } else {
+                seasonGrid.innerHTML = seasonPodiumAwards.map(award => {
+                    const winner = (award.winners || [])[0];
+                    if (!winner) return '';
+                    const seasonAward = { ...award, season: seasonNumber };
+                    const copy = getAwardDisplayCopy(seasonAward);
+                    const badge = {
+                        title: award.title,
+                        icon: award.icon,
+                        theme: award.theme,
+                        subtitle: copy.subtitle,
+                        month: `season ${seasonNumber}`
+                    };
+                    return `
+                        <article class="award-horizontal-row">
+                            <div>${buildAchievementBadgeHTML(badge, false, 'award-horizontal')}</div>
+                            <div class="award-info">
+                                <h4 class="award-info-title">${escapeHtml(award.title)}</h4>
+                                <p class="award-info-description">${escapeHtml(copy.description)}</p>
+                                <div class="mt-2"><span class="inline-flex rounded-full bg-emerald-100 text-emerald-800 px-2.5 py-1 text-[10px] font-extrabold">${escapeHtml(copy.tag)}</span></div>
+                                ${renderAwardWinnerChips([winner])}
+                            </div>
+                        </article>`;
+                }).join('');
+            }
+        };
+
+        function getTeamMatchParticipantsForDate(date) {
+            const grouped = new Map();
+            scoresData.filter(score => score.date === date && score.memberId && Number.isFinite(Number(score.totalScore)))
+                .forEach(score => {
+                    if (!grouped.has(score.memberId)) grouped.set(score.memberId, []);
+                    grouped.get(score.memberId).push(Number(score.totalScore));
+                });
+            const { processedMembers } = calculateEloAndStats((systemSettings.currentSeason || 1).toString(), 'all');
+            const statsById = new Map(processedMembers.map(member => [member.id, member]));
+            return membersData.map(member => {
+                const values = grouped.get(member.id) || [];
+                const stats = statsById.get(member.id);
+                const handicapValue = Number.parseFloat(stats?.hdcp);
+                return {
+                    id: member.id,
+                    name: member.name || '名前未設定',
+                    grade: member.grade || '',
+                    rating: stats?.rating ?? 3000,
+                    rounds: values.length,
+                    best: values.length ? Math.min(...values) : null,
+                    average: values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null,
+                    total: values.reduce((sum, value) => sum + value, 0),
+                    handicap: Number.isFinite(handicapValue) ? handicapValue : null,
+                    handicapLabel: Number.isFinite(handicapValue) ? handicapValue.toFixed(1) : '未確定'
+                };
+            }).sort((a, b) => a.name.localeCompare(b.name, 'ja'));
+        }
+
+        function createDraftTeams(count) {
+            return Array.from({ length: count }, (_, index) => ({
+                id: `match_team_${index + 1}`,
+                name: TEAM_MATCH_TEAM_NAMES[index] || `Team ${index + 1}`,
+                memberIds: []
+            }));
+        }
+
+        window.openTeamMatchCreator = () => {
+            if (!currentUserUid) {
+                window.showToast('チーム戦の作成にはログインしてください');
+                return;
+            }
+            const today = new Date();
+            document.getElementById('team-match-date').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            document.getElementById('team-match-title').value = '';
+            document.getElementById('team-match-team-count').value = '2';
+            document.getElementById('team-match-rule').value = 'daily_average';
+            document.getElementById('team-match-member-search').value = '';
+            teamMatchDraftTeams = createDraftTeams(2);
+            window.loadTeamMatchParticipants();
+            document.getElementById('modal-team-match-create').classList.remove('hidden');
+        };
+
+        window.loadTeamMatchParticipants = () => {
+            const date = document.getElementById('team-match-date').value;
+            const count = Math.min(10, Math.max(2, parseInt(document.getElementById('team-match-team-count').value) || 2));
+            const previousTeams = Array.isArray(teamMatchDraftTeams) ? teamMatchDraftTeams.map((team, index) => ({
+                ...team,
+                name: document.querySelector(`[data-team-match-name="${index}"]`)?.value.trim() || team.name
+            })) : [];
+            teamMatchDraftParticipants = getTeamMatchParticipantsForDate(date);
+            const previousSelectedIds = [...new Set(previousTeams.flatMap(team => team.memberIds || []))]
+                .filter(id => teamMatchDraftParticipants.some(member => member.id === id));
+            teamMatchDraftTeams = Array.from({ length: count }, (_, index) => ({
+                id: previousTeams[index]?.id || `match_team_${index + 1}`,
+                name: previousTeams[index]?.name || TEAM_MATCH_TEAM_NAMES[index] || `Team ${index + 1}`,
+                memberIds: (previousTeams[index]?.memberIds || []).filter(id => teamMatchDraftParticipants.some(member => member.id === id))
+            }));
+            const assignedAfterResize = new Set(teamMatchDraftTeams.flatMap(team => team.memberIds));
+            previousSelectedIds.filter(id => !assignedAfterResize.has(id)).forEach(id => {
+                const leastPopulated = [...teamMatchDraftTeams].sort((a, b) => a.memberIds.length - b.memberIds.length)[0];
+                if (leastPopulated) leastPopulated.memberIds.push(id);
+            });
+            renderTeamMatchDraftEditor();
+        };
+
+        function captureTeamMatchDraftNames() {
+            teamMatchDraftTeams.forEach((team, index) => {
+                const input = document.querySelector(`[data-team-match-name="${index}"]`);
+                if (input && input.value.trim()) team.name = input.value.trim();
+            });
+        }
+
+        window.filterTeamMatchMembers = () => {
+            captureTeamMatchDraftNames();
+            renderTeamMatchDraftEditor();
+        };
+
+        // 部員一覧そのものはチェック操作で再描画せず、チェック状態・チーム選択・人数だけを更新する。
+        // これにより一覧のスクロール位置と閲覧中の行を維持する。
+        function syncTeamMatchDraftSelectionUI() {
+            const note = document.getElementById('team-match-participants-note');
+            const participants = teamMatchDraftParticipants || [];
+            const assignedTeamByMember = new Map();
+            (teamMatchDraftTeams || []).forEach(team => (team.memberIds || []).forEach(id => assignedTeamByMember.set(id, team.id)));
+            const selectedCount = assignedTeamByMember.size;
+            const scoredCount = participants.filter(member => member.average !== null).length;
+            if (note) {
+                note.innerText = `${participants.length}名の部員から選択できます。現在${selectedCount}名を参加登録中／開催日のスコア登録済みは${scoredCount}名です。スコア未登録の部員も先に参加登録できます。`;
+            }
+            document.querySelectorAll('[data-team-match-member-checkbox]').forEach(checkbox => {
+                const memberId = checkbox.dataset.memberId;
+                checkbox.checked = assignedTeamByMember.has(memberId);
+            });
+            document.querySelectorAll('[data-team-match-member-select]').forEach(select => {
+                const memberId = select.dataset.memberId;
+                const teamId = assignedTeamByMember.get(memberId) || '';
+                select.disabled = !teamId;
+                select.value = teamId;
+            });
+            (teamMatchDraftTeams || []).forEach((team, index) => {
+                const countLabel = document.querySelector(`[data-team-match-team-count-label="${index}"]`);
+                if (countLabel) countLabel.innerText = `${(team.memberIds || []).length}名参加`;
+            });
+        }
+
+        window.toggleTeamMatchParticipant = (memberId, checked) => {
+            captureTeamMatchDraftNames();
+            teamMatchDraftTeams.forEach(team => {
+                team.memberIds = (team.memberIds || []).filter(id => id !== memberId);
+            });
+            if (checked) {
+                const leastPopulated = [...teamMatchDraftTeams].sort((a, b) => a.memberIds.length - b.memberIds.length)[0];
+                if (leastPopulated) leastPopulated.memberIds.push(memberId);
+            }
+            syncTeamMatchDraftSelectionUI();
+        };
+
+        window.assignTeamMatchMember = (memberId, teamId) => {
+            captureTeamMatchDraftNames();
+            teamMatchDraftTeams.forEach(team => {
+                team.memberIds = (team.memberIds || []).filter(id => id !== memberId);
+            });
+            const target = teamMatchDraftTeams.find(team => team.id === teamId);
+            if (target && teamMatchDraftParticipants.some(member => member.id === memberId)) target.memberIds.push(memberId);
+            syncTeamMatchDraftSelectionUI();
+        };
+
+        window.updateTeamMatchTeamNames = () => {
+            captureTeamMatchDraftNames();
+            document.querySelectorAll('[data-team-match-member-select]').forEach(select => {
+                const selectedTeamId = select.value;
+                const currentMemberId = select.dataset.memberId;
+                const options = ['<option value="">チームを選択</option>'].concat(teamMatchDraftTeams.map(team =>
+                    `<option value="${escapeHtml(team.id)}" ${selectedTeamId === team.id ? 'selected' : ''}>${escapeHtml(team.name)}</option>`
+                ));
+                select.innerHTML = options.join('');
+                select.disabled = !teamMatchDraftTeams.some(team => (team.memberIds || []).includes(currentMemberId));
+            });
+        };
+
+        function renderTeamMatchDraftEditor() {
+            const editor = document.getElementById('team-match-draft-editor');
+            const note = document.getElementById('team-match-participants-note');
+            if (!editor || !note) return;
+            const oldList = editor.querySelector('[data-team-match-member-list]');
+            const oldModal = document.getElementById('team-match-modal-scroll');
+            const savedListScrollTop = oldList ? oldList.scrollTop : 0;
+            const savedModalScrollTop = oldModal ? oldModal.scrollTop : 0;
+            const participants = teamMatchDraftParticipants || [];
+            const selectedIds = new Set(teamMatchDraftTeams.flatMap(team => team.memberIds || []));
+            const selectedCount = selectedIds.size;
+            const scoredCount = participants.filter(member => member.average !== null).length;
+            note.innerText = `${participants.length}名の部員から選択できます。現在${selectedCount}名を参加登録中／開催日のスコア登録済みは${scoredCount}名です。スコア未登録の部員も先に参加登録できます。`;
+            const teams = teamMatchDraftTeams || [];
+            const assignedTeamByMember = new Map();
+            teams.forEach(team => (team.memberIds || []).forEach(id => assignedTeamByMember.set(id, team.id)));
+            const teamInputs = `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">${teams.map((team, index) => `
+                <div class="bg-slate-50 rounded-lg p-2">
+                    <label class="block text-[10px] text-slate-500 font-bold mb-1">チーム${index + 1} 名称</label>
+                    <input data-team-match-name="${index}" oninput="window.updateTeamMatchTeamNames()" value="${escapeHtml(team.name)}" maxlength="24" class="w-full border border-slate-300 rounded-lg px-2 py-2 text-xs bg-white">
+                    <p data-team-match-team-count-label="${index}" class="text-[10px] text-slate-400 mt-1">${team.memberIds.length}名参加</p>
+                </div>`).join('')}</div>`;
+            const searchValue = (document.getElementById('team-match-member-search')?.value || '').trim().toLowerCase();
+            const filteredParticipants = participants.filter(member =>
+                !searchValue || `${member.name} ${member.grade}年 ${member.grade}`.toLowerCase().includes(searchValue)
+            );
+            const participantRows = filteredParticipants.map(member => {
+                const assignedTeamId = assignedTeamByMember.get(member.id) || '';
+                const dailyLabel = member.average === null
+                    ? '<span class="text-rose-600 font-semibold">当日スコア未登録</span>'
+                    : `当日平均 ${member.average.toFixed(1)}打 ／ ${member.rounds}R`;
+                const handicapLabel = member.handicap === null
+                    ? '<span class="text-amber-600">HDCP未確定</span>'
+                    : `HDCP ${member.handicap.toFixed(1)}`;
+                const safeMemberId = escapeHtml(member.id);
+                return `
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 px-3 py-2.5 bg-white">
+                    <label class="flex items-start gap-2 flex-1 min-w-0 cursor-pointer">
+                        <input type="checkbox" data-team-match-member-checkbox data-member-id="${safeMemberId}" ${assignedTeamId ? 'checked' : ''} onchange="window.toggleTeamMatchParticipant('${safeMemberId}', this.checked)" class="mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+                        <span class="min-w-0">
+                            <span class="block text-xs font-bold text-slate-700 truncate">${escapeHtml(member.name)} <span class="text-slate-400">(${escapeHtml(member.grade)}年)</span></span>
+                            <span class="block text-[10px] text-slate-400 mt-0.5">${dailyLabel}　／　${handicapLabel}</span>
+                        </span>
+                    </label>
+                    <select data-team-match-member-select data-member-id="${safeMemberId}" ${assignedTeamId ? '' : 'disabled'} onchange="window.assignTeamMatchMember('${safeMemberId}', this.value)" class="w-full sm:w-44 border border-slate-300 bg-white rounded-md text-xs px-2 py-2 disabled:bg-slate-100 disabled:text-slate-400">
+                        <option value="">チームを選択</option>
+                        ${teams.map(team => `<option value="${escapeHtml(team.id)}" ${assignedTeamId === team.id ? 'selected' : ''}>${escapeHtml(team.name)}</option>`).join('')}
+                    </select>
+                </div>`;
+            }).join('');
+            editor.innerHTML = teamInputs + `
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <div class="bg-slate-50 px-3 py-2 text-[10px] text-slate-500 font-bold flex justify-between">
+                        <span>部員一覧（チェックして参加登録）</span><span>${filteredParticipants.length}名表示</span>
+                    </div>
+                    <div data-team-match-member-list class="max-h-72 overflow-y-auto overscroll-contain divide-y divide-slate-100">${participantRows || '<p class="p-4 text-xs text-slate-400 text-center">検索条件に一致する部員がいません。</p>'}</div>
+                </div>`;
+            const newList = editor.querySelector('[data-team-match-member-list]');
+            const newModal = document.getElementById('team-match-modal-scroll');
+            if (newList) newList.scrollTop = savedListScrollTop;
+            if (newModal) newModal.scrollTop = savedModalScrollTop;
+        }
+
+        window.autoDraftTeamMatch = () => {
+            const selectedIds = new Set(teamMatchDraftTeams.flatMap(team => team.memberIds || []));
+            const selectedParticipants = teamMatchDraftParticipants.filter(member => selectedIds.has(member.id));
+            if (!selectedParticipants.length) {
+                window.showToast('先に部員一覧から参加者を選択してください');
+                return;
+            }
+            const count = teamMatchDraftTeams.length || 2;
+            const existingNames = teamMatchDraftTeams.map((team, index) => document.querySelector(`[data-team-match-name="${index}"]`)?.value.trim() || team.name);
+            const teams = createDraftTeams(count);
+            teams.forEach((team, index) => { team.name = existingNames[index] || team.name; });
+            const sorted = [...selectedParticipants].sort((a, b) => b.rating - a.rating);
+            sorted.forEach((member, index) => {
+                const round = Math.floor(index / count);
+                const position = index % count;
+                const teamIndex = round % 2 === 0 ? position : count - 1 - position;
+                teams[teamIndex].memberIds.push(member.id);
+            });
+            teamMatchDraftTeams = teams;
+            renderTeamMatchDraftEditor();
+            window.showToast('選択した部員をレート順に振り分けました。');
+        };
+
+        document.getElementById('form-team-match-create').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (!currentUserUid || !auth.currentUser) {
+                window.showToast('チーム戦の作成にはログインしてください');
+                return;
+            }
+            captureTeamMatchDraftNames();
+            const title = document.getElementById('team-match-title').value.trim();
+            const date = document.getElementById('team-match-date').value;
+            const ruleMode = document.getElementById('team-match-rule').value;
+            const count = teamMatchDraftTeams.length;
+            if (!title || !date || count < 2 || count > 10 || !['daily_average', 'daily_net_average'].includes(ruleMode)) {
+                alert('大会名・開催日・チーム数・勝敗ルールを確認してください。');
+                return;
+            }
+            const teams = teamMatchDraftTeams.map((team, index) => ({
+                id: team.id,
+                name: (document.querySelector(`[data-team-match-name="${index}"]`)?.value || team.name || `Team ${index + 1}`).trim(),
+                memberIds: [...(team.memberIds || [])]
+            }));
+            const assigned = teams.flatMap(team => team.memberIds);
+            const emptyTeams = teams.map((team, index) => !team.memberIds.length ? `チーム${index + 1}（${team.name}）` : null).filter(Boolean);
+            if (emptyTeams.length) {
+                alert(`各チームに1名以上の参加者が必要です。次のチームに部員を割り当ててください：\n${emptyTeams.join('、')}`);
+                return;
+            }
+            if (new Set(assigned).size !== assigned.length || assigned.some(id => !teamMatchDraftParticipants.some(member => member.id === id))) {
+                alert('参加者の重複または名簿に存在しない部員が含まれています。');
+                return;
+            }
+            if (!assigned.length) {
+                alert('参加者を選択してください。');
+                return;
+            }
+            const handicapSnapshot = {};
+            assigned.forEach(id => {
+                const participant = teamMatchDraftParticipants.find(member => member.id === id);
+                handicapSnapshot[id] = participant?.handicap ?? null;
+            });
+            const creator = membersData.find(member => member.id === currentUserUid);
+            const submitButton = document.getElementById('btn-submit-team-match');
+            const originalButtonText = submitButton?.innerText || 'チーム戦を作成する';
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.innerText = '保存中…';
+                submitButton.classList.add('opacity-60', 'cursor-not-allowed');
+            }
+            try {
+                // teamMatches コレクションへの新規ドキュメント作成。
+                const teamMatchPayload = {
+                    title,
+                    date,
+                    teamCount: count,
+                    teams,
+                    ruleMode,
+                    handicapSnapshot,
+                    createdBy: currentUserUid,
+                    createdByName: creator?.name || auth.currentUser?.email || 'ログインユーザー',
+                    createdAt: serverTimestamp()
+                };
+                const savedRef = await addDoc(collection(db, 'teamMatches'), teamMatchPayload);
+
+                // onSnapshot の再通知を待たず、保存成功した大会を画面に即時反映。
+                // その後 getDocs でサーバー上の一覧を再取得し、表示を確定する。
+                const optimisticMatch = {
+                    ...teamMatchPayload,
+                    id: savedRef.id,
+                    createdAt: { seconds: Math.floor(Date.now() / 1000) }
+                };
+                teamMatchesData = [optimisticMatch, ...teamMatchesData.filter(item => item.id !== savedRef.id)]
+                    .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || Number(b.createdAt?.seconds || 0) - Number(a.createdAt?.seconds || 0));
+                window.closeModal('modal-team-match-create');
+                window.switchTab('team-matches');
+                renderTeamMatchEvents();
+                window.showToast(`チーム対抗戦「${title}」を登録しました`);
+                console.info('チーム戦を登録しました:', savedRef.id);
+
+                try {
+                    const refreshed = await getDocs(collection(db, 'teamMatches'));
+                    teamMatchesData = refreshed.docs.map(item => ({ id: item.id, ...item.data() }))
+                        .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || Number(b.createdAt?.seconds || 0) - Number(a.createdAt?.seconds || 0));
+                    renderTeamMatchEvents();
+                } catch (refreshError) {
+                    // 作成自体は成功しているため、直前の即時表示は保持する。
+                    console.warn('チーム戦の再取得に失敗しました。リアルタイム同期を待機します。', refreshError);
+                    const target = document.getElementById('team-match-events-container');
+                    if (target && !teamMatchesData.length) {
+                        target.innerHTML = '<div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">チーム戦は保存されましたが、一覧の再取得に失敗しました。再読み込みを押してください。</div>';
+                    }
+                }
+            } catch (err) {
+                console.error('チーム戦の作成に失敗しました', err);
+                if (err.code === 'permission-denied') {
+                    alert('チーム戦を保存できませんでした。Firestoreのセキュリティルールで teamMatches コレクションへの create 権限が許可されていません。Firebase Console の Firestore Rules に teamMatches の作成ルールを追加してください。');
+                } else if (err.code === 'unauthenticated') {
+                    alert('ログイン状態を確認できませんでした。いったんログアウトして再ログインしてください。');
+                } else {
+                    alert(`チーム戦の登録に失敗しました。\nエラーコード：${err.code || '不明'}\n詳細：${err.message || err}`);
+                }
+            } finally {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerText = originalButtonText;
+                    submitButton.classList.remove('opacity-60', 'cursor-not-allowed');
+                }
+            }
+        });
+
+        window.deleteTeamMatch = async (matchId) => {
+            if (!currentUserUid) {
+                window.showToast('チーム戦の削除にはログインしてください');
+                return;
+            }
+            const match = teamMatchesData.find(item => item.id === matchId);
+            if (!match) return;
+            if (!confirm(`「${match.title || 'チーム対抗戦'}」を削除しますか？\nログイン済みの部員であれば作成者以外も削除できます。この操作は取り消せません。`)) return;
+            try {
+                await deleteDoc(doc(db, 'teamMatches', matchId));
+                window.showToast('チーム対抗戦を削除しました');
+            } catch (err) {
+                alert('チーム戦の削除に失敗しました: ' + err.message + '。Firestoreの teamMatches コレクションへの削除権限を確認してください。');
+            }
+        };
+
+        function calculateTeamMatchStandings(match) {
+            const dailyScores = scoresData.filter(score => score.date === match.date && Number.isFinite(Number(score.totalScore)));
+            const byMember = new Map();
+            dailyScores.forEach(score => {
+                if (!byMember.has(score.memberId)) byMember.set(score.memberId, []);
+                byMember.get(score.memberId).push(Number(score.totalScore));
+            });
+            const { processedMembers } = calculateEloAndStats((systemSettings.currentSeason || 1).toString(), 'all');
+            const statsById = new Map(processedMembers.map(member => [member.id, member]));
+            const usesHandicap = match.ruleMode === 'daily_net_average';
+            const teams = (match.teams || []).map((team, index) => {
+                const memberResults = (team.memberIds || []).map(id => {
+                    const values = byMember.get(id) || [];
+                    const member = membersData.find(item => item.id === id);
+                    const dailyAverage = values.length ? values.reduce((sum, item) => sum + item, 0) / values.length : null;
+                    const dailyBest = values.length ? Math.min(...values) : null;
+                    const dailyTotal = values.length ? values.reduce((sum, item) => sum + item, 0) : null;
+                    let handicap = null;
+                    const savedHandicap = match.handicapSnapshot?.[id];
+                    if (savedHandicap !== null && savedHandicap !== undefined && Number.isFinite(Number(savedHandicap))) {
+                        handicap = Number(savedHandicap);
+                    } else {
+                        // 作成時に未確定だったHDCPは、後日確定した時点で利用可能にする。
+                        const currentHandicap = Number.parseFloat(statsById.get(id)?.hdcp);
+                        handicap = Number.isFinite(currentHandicap) ? currentHandicap : null;
+                    }
+                    let value = dailyAverage;
+                    if (dailyAverage === null) value = null;
+                    else if (usesHandicap) value = handicap === null ? null : dailyAverage - handicap;
+                    else if (match.ruleMode === 'member_best_average') value = dailyBest;
+                    else if (match.ruleMode === 'total_strokes') value = dailyTotal;
+                    return {
+                        id,
+                        name: member?.name || '退部・未登録部員',
+                        rounds: values.length,
+                        dailyAverage,
+                        dailyBest,
+                        dailyTotal,
+                        handicap,
+                        value,
+                        missingReason: dailyAverage === null ? 'スコア待ち' : (usesHandicap && handicap === null ? 'HDCP未確定' : '')
+                    };
+                });
+                const active = memberResults.filter(item => item.value !== null);
+                const score = active.length
+                    ? (match.ruleMode === 'total_strokes'
+                        ? active.reduce((sum, item) => sum + item.value, 0)
+                        : active.reduce((sum, item) => sum + item.value, 0) / active.length)
+                    : null;
+                const complete = memberResults.length > 0 && memberResults.every(item => item.value !== null);
+                return { ...team, index, score, activeCount: active.length, memberResults, complete };
+            });
+            const ranked = [...teams].sort((a, b) => {
+                if (a.score === null && b.score === null) return a.index - b.index;
+                if (a.score === null) return 1;
+                if (b.score === null) return -1;
+                return a.score - b.score;
+            });
+            let previousScore = null, previousRank = 0;
+            ranked.forEach((team, index) => {
+                if (team.score === null) team.rank = '--';
+                else if (previousScore !== null && Math.abs(team.score - previousScore) < 0.000001) team.rank = previousRank;
+                else { team.rank = index + 1; previousRank = team.rank; previousScore = team.score; }
+            });
+            const isFinal = ranked.length > 0 && ranked.every(team => team.complete);
+            return { ranked, isFinal, usesHandicap };
+        }
+
+        function getTeamVictoryBadgeHTML() {
+            return `<span class="inline-flex items-center gap-1.5 rounded-full border border-amber-400 px-3 py-1.5 text-[10px] font-black tracking-widest text-amber-950 shadow-md" style="background:linear-gradient(135deg,#fef3c7 0%,#fbbf24 45%,#fef3c7 100%);box-shadow:0 2px 8px rgba(180,83,9,.22)"><span class="text-sm">🏆</span><span>CHAMPION</span><span>✦</span></span>`;
+        }
+
+        window.refreshTeamMatches = async () => {
+            const button = document.getElementById('btn-refresh-team-matches');
+            const original = button?.innerText || '↻ 再読み込み';
+            if (button) { button.disabled = true; button.innerText = '読み込み中…'; }
+            try {
+                const snapshot = await getDocs(collection(db, 'teamMatches'));
+                teamMatchesData = snapshot.docs.map(item => ({ id: item.id, ...item.data() }))
+                    .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || Number(b.createdAt?.seconds || 0) - Number(a.createdAt?.seconds || 0));
+                renderTeamMatchEvents();
+                window.showToast(`チーム戦を${teamMatchesData.length}件読み込みました`);
+            } catch (err) {
+                console.error('チーム戦の再読み込みに失敗しました', err);
+                const target = document.getElementById('team-match-events-container');
+                if (target) target.innerHTML = `<div class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">再読み込みに失敗しました（${escapeHtml(err.code || err.message || err)}）。Firestore Rules の teamMatches / read 権限を確認してください。</div>`;
+                window.showToast('チーム戦を読み込めませんでした');
+            } finally {
+                if (button) { button.disabled = false; button.innerText = original; }
+            }
+        };
+
+        function renderTeamMatchEvents() {
+            const container = document.getElementById('team-match-events-container');
+            if (!container) return;
+            const createButton = document.getElementById('btn-create-team-match');
+            const loginNote = document.getElementById('team-match-login-note');
+            if (createButton) createButton.classList.toggle('hidden', !currentUserUid);
+            if (loginNote) loginNote.classList.toggle('hidden', !!currentUserUid);
+            if (!teamMatchesData.length) {
+                container.innerHTML = '<div class="text-center text-sm text-slate-400 py-8 bg-slate-50 rounded-xl">まだチーム戦がありません。「チーム戦を作成」から大会を作れます。</div>';
+                return;
+            }
+            container.innerHTML = teamMatchesData.map(match => {
+                const { ranked: standings, isFinal, usesHandicap } = calculateTeamMatchStandings(match);
+                const ruleLabel = TEAM_MATCH_RULES[match.ruleMode] || '旧ルールのスコア集計';
+                const scoreLabel = usesHandicap ? 'ネット平均' : (match.ruleMode === 'daily_average' ? '当日平均' : (match.ruleMode === 'member_best_average' ? '当日ベスト平均' : (match.ruleMode === 'member_average' ? '当日平均' : (match.ruleMode === 'total_strokes' ? '合計打数' : 'チーム平均'))));
+                const winners = isFinal ? standings.filter(team => team.rank === 1) : [];
+                const rankTableRows = standings.map((team, index) => {
+                    const medal = team.rank === 1 ? '🥇' : team.rank === 2 ? '🥈' : team.rank === 3 ? '🥉' : `${team.rank}位`;
+                    const isWinner = isFinal && team.rank === 1;
+                    return `<tr class="${isWinner ? 'bg-amber-50' : 'bg-white'} border-b border-slate-100">
+                        <td class="px-3 py-3 text-center font-black text-sm whitespace-nowrap">${team.rank === '--' ? '－' : medal}</td>
+                        <td class="px-3 py-3 min-w-0"><div class="flex flex-wrap items-center gap-2"><span class="font-bold text-sm text-slate-800">${escapeHtml(team.name || `Team ${index + 1}`)}</span>${isWinner ? getTeamVictoryBadgeHTML() : ''}</div><span class="block text-[10px] text-slate-400 mt-0.5">${team.activeCount}/${team.memberResults.length}名の集計完了</span></td>
+                        <td class="px-3 py-3 text-right"><span class="text-lg font-black tabular-nums ${team.score === null ? 'text-slate-300' : (isWinner ? 'text-amber-700' : 'text-emerald-700')}">${team.score === null ? '--' : team.score.toFixed(1)}</span><span class="block text-[9px] text-slate-400">${scoreLabel}</span></td>
+                    </tr>`;
+                }).join('');
+                const teamDetails = standings.map((team, index) => {
+                    const isWinner = isFinal && team.rank === 1;
+                    return `<div class="rounded-xl border ${isWinner ? 'border-amber-300 bg-amber-50/50' : 'border-slate-200 bg-white'} p-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2 min-w-0"><span class="w-7 h-7 rounded-full flex items-center justify-center text-white font-black text-xs" style="background:${TEAM_MATCH_TEAM_COLORS[team.index % TEAM_MATCH_TEAM_COLORS.length]}">${team.rank === '--' ? '－' : team.rank}</span><span class="font-bold text-sm text-slate-800 truncate">${escapeHtml(team.name || `Team ${index + 1}`)}</span></div>
+                            ${isWinner ? getTeamVictoryBadgeHTML() : ''}
+                        </div>
+                        <div class="mt-2 pt-2 border-t border-slate-100 space-y-1.5">
+                            ${team.memberResults.map(member => {
+                                let resultLabel = member.missingReason || '';
+                                if (!resultLabel && member.dailyAverage !== null) {
+                                    if (usesHandicap) resultLabel = `${member.dailyAverage.toFixed(1)} − ${member.handicap.toFixed(1)} = ${member.value.toFixed(1)}`;
+                                    else if (match.ruleMode === 'member_best_average') resultLabel = `ベスト ${member.dailyBest.toFixed(1)}打`;
+                                    else if (match.ruleMode === 'total_strokes') resultLabel = `合計 ${member.dailyTotal.toFixed(1)}打`;
+                                    else resultLabel = `${member.dailyAverage.toFixed(1)}打`;
+                                }
+                                return `<div class="flex justify-between items-start gap-2 text-[10px]"><span class="text-slate-600 truncate">${escapeHtml(member.name)}</span><span class="font-bold text-slate-700 whitespace-nowrap">${escapeHtml(resultLabel)}${member.rounds ? ` (${member.rounds}R)` : ''}</span></div>`;
+                            }).join('')}
+                        </div>
+                    </div>`;
+                }).join('');
+                const statusLabel = isFinal ? '順位確定' : (usesHandicap ? '暫定順位：スコアまたはHDCPの登録待ち' : '暫定順位：スコア登録待ち');
+                return `<article class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                    <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                        <div class="min-w-0"><h4 class="font-bold text-sm text-slate-800">${escapeHtml(match.title || 'チーム対抗戦')}</h4><p class="text-[10px] text-slate-500 mt-1">開催日：${escapeHtml(match.date || '--')} ／ 作成：${escapeHtml(match.createdByName || '部員')}</p></div>
+                        <div class="flex flex-wrap items-center gap-2"><span class="text-[10px] rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 px-2.5 py-1">${escapeHtml(ruleLabel)}</span><span class="text-[10px] rounded-full ${isFinal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} px-2.5 py-1 font-bold">${statusLabel}</span>${currentUserUid ? `<button type="button" onclick="window.deleteTeamMatch('${escapeHtml(match.id)}')" class="text-[10px] font-bold text-rose-600 border border-rose-200 hover:bg-rose-50 rounded-lg px-2.5 py-1.5">削除</button>` : ''}</div>
+                    </div>
+                    <div class="p-3 sm:p-4 space-y-3">
+                        <div><h5 class="text-xs font-black text-slate-700 mb-2">🏆 チーム順位</h5><div class="overflow-x-auto rounded-xl border border-slate-200"><table class="w-full text-left"><thead class="bg-slate-100 text-[10px] text-slate-500"><tr><th class="px-3 py-2 text-center">順位</th><th class="px-3 py-2">チーム</th><th class="px-3 py-2 text-right">${scoreLabel}</th></tr></thead><tbody>${rankTableRows}</tbody></table></div></div>
+                        <div><h5 class="text-xs font-black text-slate-700 mb-2">参加メンバー別スコア</h5><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">${teamDetails}</div></div>
+                        ${winners.length ? `<div class="rounded-xl border border-amber-300 p-3 text-center" style="background:linear-gradient(135deg,#fffbeb,#fef3c7,#fff7ed)"><div class="text-xs font-black tracking-[.2em] text-amber-800">✦ TOURNAMENT CHAMPION ✦</div><div class="flex flex-wrap items-center justify-center gap-2 mt-2">${winners.map(team => `<span class="text-sm font-black text-amber-950">${escapeHtml(team.name)}</span>`).join('<span class="text-amber-700">／</span>')}</div><div class="mt-2">${getTeamVictoryBadgeHTML()}</div></div>` : ''}
+                    </div>
+                </article>`;
+            }).join('');
+        }
 
         function renderMyPage() {
             const notLoggedInDiv = document.getElementById('mypage-not-logged-in');
@@ -2615,6 +4269,7 @@ Object.keys(statsMap).forEach(id => {
                 document.getElementById('mypage-input-photo').value = myStats.photoUrl || '⛳';
                 document.getElementById('mypage-input-email').value = myStats.email || auth.currentUser?.email || '';
                 document.getElementById('mypage-input-bio').value = myStats.bio || '';
+                if (!document.getElementById('sec-mypage').classList.contains('hidden')) renderMyPageBadges(myStats);
             }
         }
 
