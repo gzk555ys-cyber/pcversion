@@ -2710,7 +2710,7 @@ Object.keys(statsMap).forEach(id => {
         }
 
         function calculateRivalPrediction(myMember, rivalMember, stats) {
-            // 各部員のスコアを日付・登録時刻の新しい順に並べ、直近10ラウンドを抽出
+            // 各部員のスコアを日付・登録時刻の新しい順に並べ、直近5ラウンドを抽出
             const getScoreSummary = member => {
                 const timestampOf = score => {
                     if (score.createdAt?.toMillis) return score.createdAt.toMillis();
@@ -2723,7 +2723,7 @@ Object.keys(statsMap).forEach(id => {
                     .filter(score => Number.isFinite(score.total) && score.total > 0)
                     .sort((a, b) => b.timestamp - a.timestamp);
                 const allValues = validScores.map(score => score.total);
-                const recentValues = validScores.slice(0, 10).map(score => score.total);
+                const recentValues = validScores.slice(0, 5).map(score => score.total);
                 const average = values => values.length
                     ? values.reduce((sum, value) => sum + value, 0) / values.length
                     : null;
@@ -2755,8 +2755,18 @@ Object.keys(statsMap).forEach(id => {
                 : 0.5;
 
             // 各要素を「自分が勝つ確率」に変換
-            const eloWin = hasRate
-                ? 1 / (1 + Math.pow(10, (rivalRate - myRate) / 400))
+            // 勝敗予想専用のDivision補正。保存済みレート自体は変更しない。
+            // Div1: +800、Div2: +400、Div3: +0（1 Divisionあたり400pt）。
+            const divisionBonus = member => {
+                const division = Number(member?.division);
+                return Number.isInteger(division) && division >= 1 && division <= 3
+                    ? (3 - division) * 400
+                    : null;
+            };
+            const myBonus = divisionBonus(myMember);
+            const rivalBonus = divisionBonus(rivalMember);
+            const eloWin = hasRate && myBonus !== null && rivalBonus !== null
+                ? 1 / (1 + Math.pow(10, ((rivalRate + rivalBonus) - (myRate + myBonus)) / 400))
                 : null;
             // スコアは少ない方が有利。約4.5打差で明確な差が出るロジスティック曲線
             const recentScoreWin = hasRecentAverage
@@ -2766,11 +2776,11 @@ Object.keys(statsMap).forEach(id => {
                 ? 1 / (1 + Math.exp(-(rivalAverage - myAverage) / 4.5))
                 : null;
 
-            // 基準配分：レート40%、直近10ラウンド平均25%、通算平均10%、直接対決25%
+            // 基準配分：レート40%、直近5ラウンド平均25%、通算平均10%、直接対決25%
             // 両者のデータが揃っていない要素は除外し、利用可能な要素だけで重みを再配分
             const components = [
                 { key: 'rate', value: eloWin, weight: 0.40 },
-                { key: 'recent10', value: recentScoreWin, weight: 0.25 },
+                { key: 'recent5', value: recentScoreWin, weight: 0.25 },
                 { key: 'overall', value: overallScoreWin, weight: 0.10 },
                 { key: 'headToHead', value: h2hWin, weight: 0.25 }
             ].filter(component => component.value !== null);
@@ -2812,7 +2822,7 @@ Object.keys(statsMap).forEach(id => {
                 rivalRecentCount: rivalScoreSummary.recentCount,
                 matches: matches.length,
                 weightsUsed,
-                modelVersion: 'recency-weighted-v2'
+                modelVersion: 'recent5-division400-v3'
             };
         }
 
@@ -2837,13 +2847,13 @@ Object.keys(statsMap).forEach(id => {
 
             const recentText = probabilities.myRecentAverage === null || probabilities.rivalRecentAverage === null
                 ? '直近スコアの比較データが不足しています。'
-                : `直近10ラウンドの平均はあなた ${probabilities.myRecentAverage.toFixed(1)}（${probabilities.myRecentCount}件）、${member.name} ${probabilities.rivalRecentAverage.toFixed(1)}（${probabilities.rivalRecentCount}件）。`;
+                : `直近5ラウンドの平均はあなた ${probabilities.myRecentAverage.toFixed(1)}（${probabilities.myRecentCount}件）、${member.name} ${probabilities.rivalRecentAverage.toFixed(1)}（${probabilities.rivalRecentCount}件）。`;
             const overallText = probabilities.myAverage === null || probabilities.rivalAverage === null
                 ? '通算平均の比較データは不足しています。'
                 : `通算平均はあなた ${probabilities.myAverage.toFixed(1)}、${member.name} ${probabilities.rivalAverage.toFixed(1)}。`;
             const weightLabels = {
                 rate: 'レート',
-                recent10: '直近10R平均',
+                recent5: '直近5R平均',
                 overall: '通算平均',
                 headToHead: '直接対決'
             };
