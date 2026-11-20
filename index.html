@@ -259,7 +259,7 @@
                                 <th class="py-3 px-4 text-center">所属Div</th>
                                 <th class="py-3 px-4 text-center">レート</th>
                                 <th class="py-3 px-4 text-center">ランク・ステータス</th>
-                                <th class="py-3 px-4 text-center">選択期間HDCP</th>
+                                <th class="py-3 px-4 text-center">直近最大10ラウンドHDCP</th>
                                 <th class="py-3 px-4 text-center">平均スコア</th>
                                 <th class="py-3 px-4 text-center">ベスト</th>
                                 <th class="py-3 px-4 text-center">提出数</th>
@@ -440,7 +440,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div>
                     <h2 class="text-xl font-bold text-slate-800">部内データ・アナリティクス</h2>
-                    <p class="text-xs text-slate-500">選択したシーズン・全期間の平均スコア分布、ハンディキャップ順位表、および学年別平均の可視化データ</p>
+                    <p class="text-xs text-slate-500">平均スコア分布、全シーズン共通の直近最大10ラウンドHDCP順位表、および学年別平均の可視化データ</p>
                 </div>
                 <div class="flex items-center gap-1.5 bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 shadow-sm">
                     <span class="text-xs text-slate-500 font-bold">シーズン絞り込み:</span>
@@ -465,7 +465,7 @@
                     <h3 class="font-bold text-sm text-slate-700 mb-1 flex items-center gap-2">
                         📈 学年別平均ハンディキャップ
                     </h3>
-                    <p class="text-[11px] text-slate-400 mb-3">選択期間における部員の学年ごとHDCP平均値</p>
+                    <p class="text-[11px] text-slate-400 mb-3">全シーズン共通・直近最大10ラウンドHDCPの学年別平均</p>
                     <div class="h-64">
                         <canvas id="chart-grade-hdcp"></canvas>
                     </div>
@@ -475,7 +475,7 @@
             <div class="glass-card rounded-xl shadow-sm overflow-hidden">
                 <div class="p-4 bg-slate-50/80 border-b border-slate-200">
                     <h3 class="font-bold text-base text-slate-800 flex items-center gap-2">
-                        🏆 ハンディキャップ順位表 (選択期間HDCP順)
+                        🏆 ハンディキャップ順位表 (直近最大10ラウンドHDCP順)
                     </h3>
                 </div>
                 <div class="overflow-x-auto">
@@ -915,7 +915,7 @@
                     <div class="rounded-xl border border-emerald-100 bg-emerald-50/40 p-3 sm:p-4 space-y-3">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                             <h5 class="text-sm font-bold text-slate-800">⚖️ ライバルとの実力比較</h5>
-                            <span class="text-[10px] sm:text-xs text-slate-500">レート・HDCP：現シーズン ／ その他：通算</span>
+                            <span class="text-[10px] sm:text-xs text-slate-500">レート：現シーズン ／ HDCP：直近最大10R・全シーズン共通 ／ その他：通算</span>
                         </div>
                         <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
                             <table class="w-full min-w-[360px] text-xs">
@@ -931,7 +931,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <p class="text-[10px] text-slate-400">レートとHDCPは現シーズンの値、平均スコア・ベストスコア・ラウンド数は全シーズン通算です。各項目で数値が優れている側に「優勢」と表示します。</p>
+                        <p class="text-[10px] text-slate-400">レートは現シーズンの値、HDCPは全シーズン共通の直近最大10ラウンド（3ラウンド以上で確定）、平均スコア・ベストスコア・ラウンド数は全シーズン通算です。各項目で数値が優れている側に「優勢」と表示します。</p>
                     </div>
 
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -1091,23 +1091,33 @@
                     </div>
                     <div>
                         <label for="team-match-rule" class="block text-xs font-bold text-slate-700 mb-1">勝敗ルール</label>
-                        <select id="team-match-rule" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-white">
+                        <select id="team-match-rule" onchange="window.updateTeamMatchRuleDescription && window.updateTeamMatchRuleDescription()" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-white">
                             <option value="daily_average">当日のスコア平均（低い方が勝ち）</option>
-                            <option value="daily_net_average">（当日のスコア－ハンディキャップ）の平均（低い方が勝ち）</option>
+                            <option value="daily_net_average">ネットスコア平均方式</option>
+                            <option value="individual_rank_points">個人順位ポイント方式</option>
+                            <option value="average_improvement_points">平均スコア比較方式</option>
+                            <option value="individual_match_points">チーム対抗・個人勝ち点方式</option>
                         </select>
                     </div>
+                    <div id="team-match-pairing-wrap" class="hidden">
+                        <label for="team-match-pairing" class="block text-xs font-bold text-slate-700 mb-1">個人対戦カードの組み合わせ</label>
+                        <select id="team-match-pairing" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-white">
+                            <option value="rating">レート順（Division優先→同Division内レート順）</option>
+                            <option value="random">ランダム</option>
+                            <option value="handicap">ハンディキャップ順（近いHDCP同士）</option>
+                            <option value="team_pick">チーム指名制（個人の対戦カードを自由に編成）</option>
+                        </select>
+                    </div>
+                    <div id="team-match-team-pairings" class="hidden sm:col-span-2 rounded-lg border border-indigo-100 bg-indigo-50/40 p-3"></div>
                 </div>
-                <div class="rounded-lg bg-emerald-50 border border-emerald-100 p-3 text-xs text-emerald-900 space-y-1">
-                    <p>部員一覧から参加者を選び、各チームに割り当ててください。開催日のスコアが未登録でも参加者として登録できます。</p>
-                    <p>「当日のスコア平均」は各参加者の当日平均スコアをチーム内で平均します。「（当日のスコア－ハンディキャップ）の平均」は各参加者の当日平均から、作成時点の現シーズンHDCPを引いた値をチーム内で平均します。</p>
-                    <p>HDCPが未確定（現シーズン3ラウンド未満）の部員はHDCP集計では未確定扱いとなり、HDCPが確定するまで順位は暫定です。確定済みHDCPは大会作成時点の値を使用します。</p>
-                </div>
+                <div id="team-match-rule-description" class="rounded-lg bg-emerald-50 border border-emerald-100 p-3 text-xs text-emerald-900 space-y-1" aria-live="polite"></div>
+                <div class="text-xs text-slate-500">部員一覧から参加者を選び、各チームに割り当ててください。開催日のスコアが未登録でも参加者として登録できます。</div>
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
                         <h4 class="font-bold text-sm text-slate-800">参加者を選択・チーム分け</h4>
                         <p id="team-match-participants-note" class="text-[11px] text-slate-500 mt-1">部員一覧から参加者を選択してください。</p>
                     </div>
-                    <button type="button" onclick="window.autoDraftTeamMatch()" class="px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold">🎲 選択した部員をレート順に自動振り分け</button>
+                    <button type="button" onclick="window.autoDraftTeamMatch()" class="px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold">🎲 選択した部員をDivision・レート順に自動振り分け</button>
                 </div>
                 <div>
                     <label for="team-match-member-search" class="block text-xs font-bold text-slate-700 mb-1">部員を検索</label>
@@ -1187,6 +1197,7 @@
         let teamMatchDraftTeams = [];
         let editingTeamMatchId = null;
         let teamMatchDraftParticipants = [];
+        let teamMatchDraftPairings = [];
         let monthlyAwardsData = [];
         let monthlyAwardsSnapshotReady = false;
         let membersSnapshotReady = false;
@@ -1231,6 +1242,20 @@
     // 第3優先: 前シーズンのレート適用ラウンド数
     return b.prevRateCount - a.prevRateCount;
 }
+
+        // チーム分け・個人対戦の「レート順」はDivisionを最優先し、
+        // 同じDivision内だけレートの高い順に並べる。
+        // 例：Division 1 / Rate 2800 は Division 2 / Rate 3500 より上位。
+        function compareTeamMatchDivisionRating(a, b) {
+            const divisionOrder = value => {
+                const division = Number(value);
+                return Number.isFinite(division) && division >= 1 && division <= 3 ? division : 3;
+            };
+            const divisionA = divisionOrder(a.division);
+            const divisionB = divisionOrder(b.division);
+            if (divisionA !== divisionB) return divisionA - divisionB;
+            return Number(b.rating || 0) - Number(a.rating || 0);
+        }
         window.showToast = function(msg) {
             const toast = document.getElementById('toast-banner');
             document.getElementById('toast-message').innerText = msg;
@@ -2066,15 +2091,23 @@
             });
 
             Object.values(statsMap).forEach(m => {
-                const targetScores = (targetSeason === 'all') ? m.allScores : m.seasonScores;
-                const totalCount = targetScores.length;
-                if (totalCount >= 3) {
-                    const avg = targetScores.reduce((acc, cur) => acc + cur.totalScore, 0) / totalCount;
-                    let calculatedHdcp = (avg - 72) * 0.9;
-                    if (calculatedHdcp < 0) calculatedHdcp = 0.0;
-                    m.hdcp = calculatedHdcp.toFixed(1);
+                // HDCPはシーズンから独立。全期間をプレー日降順に並べ、直近最大10Rを使用。
+                const recentScores = [...m.allScores].sort((a, b) => {
+                    const dateCompare = String(b.date || '').localeCompare(String(a.date || ''));
+                    if (dateCompare) return dateCompare;
+                    const timeOf = score => score.createdAt?.toMillis ? score.createdAt.toMillis() : (score.createdAt?.seconds ? score.createdAt.seconds * 1000 : 0);
+                    return timeOf(b) - timeOf(a);
+                }).slice(0, 10);
+                const count = recentScores.length;
+                m.hdcpRounds = count;
+                m.hdcpScores = recentScores;
+                if (count >= 3) {
+                    const avg = recentScores.reduce((acc, cur) => acc + Number(cur.totalScore || 0), 0) / count;
+                    m.hdcpAverage = avg;
+                    m.hdcp = Math.max(0, (avg - 72) * 0.9).toFixed(1);
                 } else {
-                    m.hdcp = `Placement (${totalCount}/3)`;
+                    m.hdcpAverage = count ? recentScores.reduce((acc, cur) => acc + Number(cur.totalScore || 0), 0) / count : null;
+                    m.hdcp = `Placement (${count}/3)`;
                 }
             });
 
@@ -3547,13 +3580,172 @@ Object.keys(statsMap).forEach(id => {
         };
 
         const TEAM_MATCH_RULES = {
-            daily_average: '当日のスコア平均',
-            daily_net_average: '（当日のスコア－ハンディキャップ）の平均',
-            // 旧バージョンで作成された大会の表示・集計互換用
+            daily_average: '当日のスコア平均方式',
+            daily_net_average: 'ネットスコア平均方式',
+            individual_rank_points: '個人順位ポイント方式',
+            average_improvement_points: '平均スコア比較方式',
+            individual_match_points: 'チーム対抗・個人勝ち点方式',
             member_best_average: '旧ルール：各部員の当日ベストスコア平均',
             member_average: '旧ルール：各部員の当日平均スコア平均',
             total_strokes: '旧ルール：全ラウンドの合計打数'
         };
+        const TEAM_MATCH_RULE_DESCRIPTIONS = {
+            daily_average: '各参加者の開催日当日のグロススコアを算出し、チーム内で平均します。値が小さいチームが上位です。',
+            daily_net_average: '各参加者の当日スコアから、HDCPを差し引き、チーム内で平均します。HDCPは3ラウンド以上で確定します。値が小さいチームが上位です。',
+            individual_rank_points: '参加者全員を当日スコアの低い順に並べ、1位から順に参加人数分のポイントを配ります（参加者が16人であれば、1位=16ポイント、2位=15ポイント…最下位=1ポイント）。各チームの獲得ポイント合計で順位を決めます。',
+            average_improvement_points: '各参加者の直近最大10ラウンド平均と当日スコアを比較します。当日スコアが過去平均を下回った（改善した）場合だけ、改善した打数分をポイント加算します。悪化・同点は0点。チームの合計ポイントで順位を決めます。比較用の過去スコアが1ラウンド未満の場合、その参加者はポイント未確定です。',
+            individual_match_points: '個人対決を行い、各対戦は勝ち1点・引き分け0.5点・負け0点。チームの勝ち点合計で順位を決めます。レート順・ランダム・HDCP順では対戦カードを自動編成します。チーム指名制では編集者が対戦カードの2人を直接選び、マッチ1・マッチ2…の順番もドラッグして自由に並べ替えられます。大将対決に設定した1マッチだけ、勝ち点配分が2倍（勝ち2点・引き分け1点）になります。',
+            member_best_average: '旧ルール：各部員の当日ベストスコアをチーム内で平均します。',
+            member_average: '旧ルール：各部員の当日平均スコアをチーム内で平均します。',
+            total_strokes: '旧ルール：各部員の当日スコア合計をチーム間で比較します。'
+        };
+        function updateTeamMatchRuleDescription() {
+            const mode = document.getElementById('team-match-rule')?.value || 'daily_average';
+            const box = document.getElementById('team-match-rule-description');
+            const pairingWrap = document.getElementById('team-match-pairing-wrap');
+            if (box) box.textContent = TEAM_MATCH_RULE_DESCRIPTIONS[mode] || '開催日のスコアをもとにチーム順位を集計します。';
+            if (pairingWrap) pairingWrap.classList.toggle('hidden', mode !== 'individual_match_points');
+            renderTeamMatchPairingPicker();
+        }
+        let teamMatchPairingDragIndex = null;
+        function getTeamMatchAssignedMembers() {
+            const teamByMember = new Map();
+            (teamMatchDraftTeams || []).forEach(team => (team.memberIds || []).forEach(id => teamByMember.set(id, team)));
+            return (teamMatchDraftParticipants || [])
+                .filter(member => teamByMember.has(member.id))
+                .map(member => ({ ...member, team: teamByMember.get(member.id) }))
+                .sort((a, b) => String(a.team.name).localeCompare(String(b.team.name), 'ja') || String(a.name).localeCompare(String(b.name), 'ja'));
+        }
+        function renderTeamMatchPairingPicker() {
+            const box = document.getElementById('team-match-team-pairings');
+            if (!box) return;
+            const isManual = document.getElementById('team-match-rule')?.value === 'individual_match_points'
+                && document.getElementById('team-match-pairing')?.value === 'team_pick';
+            box.classList.toggle('hidden', !isManual);
+            if (!isManual) return;
+
+            const assigned = getTeamMatchAssignedMembers();
+            const assignedById = new Map(assigned.map(member => [member.id, member]));
+            // 参加解除・チーム変更で無効になった選手は該当欄だけ空にする。
+            teamMatchDraftPairings = (teamMatchDraftPairings || []).map(pair => {
+                if (!pair || typeof pair !== 'object') return { aId: '', bId: '' };
+                return {
+                    aId: assignedById.has(pair.aId) ? pair.aId : '',
+                    bId: assignedById.has(pair.bId) ? pair.bId : '',
+                    captainMatch: pair.captainMatch === true
+                };
+            });
+
+            const usedByOtherCards = (index, side) => new Set(teamMatchDraftPairings.flatMap((pair, pairIndex) => {
+                if (pairIndex === index) return [];
+                return [pair.aId, pair.bId].filter(Boolean);
+            }));
+            const makeOptions = (index, side, currentId) => {
+                const pair = teamMatchDraftPairings[index] || { aId: '', bId: '' };
+                const otherId = side === 'aId' ? pair.bId : pair.aId;
+                const unavailable = usedByOtherCards(index, side);
+                if (otherId) unavailable.add(otherId);
+                const selectedA = assignedById.get(pair.aId);
+                return ['<option value="">選手を選択</option>'].concat(assigned
+                    .filter(member => !unavailable.has(member.id) || member.id === currentId)
+                    .filter(member => side !== 'bId' || !selectedA || member.team.id !== selectedA.team.id)
+                    .map(member => `<option value="${escapeHtml(member.id)}" ${currentId === member.id ? 'selected' : ''}>${escapeHtml(member.team.name)}：${escapeHtml(member.name)}（${escapeHtml(member.grade)}年）</option>`)
+                ).join('');
+            };
+
+            const cards = teamMatchDraftPairings.map((pair, index) => {
+                const memberA = assignedById.get(pair.aId);
+                const memberB = assignedById.get(pair.bId);
+                const valid = memberA && memberB && memberA.team.id !== memberB.team.id;
+                return `<div draggable="true" data-manual-pair-index="${index}" ondragstart="window.startTeamMatchPairingDrag(${index}, event)" ondragover="window.overTeamMatchPairingDrag(event)" ondrop="window.dropTeamMatchPairing(${index}, event)" ondragend="window.endTeamMatchPairingDrag()" class="team-match-manual-pair-card rounded-xl border ${valid ? 'border-indigo-200 bg-white' : 'border-amber-200 bg-amber-50/50'} p-3 space-y-2 cursor-grab active:cursor-grabbing">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 min-w-0"><span class="text-slate-400 text-base" aria-hidden="true">⠿</span><span class="rounded-md bg-indigo-100 text-indigo-800 px-2 py-1 text-[11px] font-black">マッチ ${index + 1}</span><span class="text-[10px] text-slate-400">ドラッグして順番変更</span></div>
+                        <div class="flex items-center flex-wrap justify-end gap-1.5 shrink-0">
+                            <button type="button" onclick="window.toggleTeamMatchCaptainMatch(${index})" aria-pressed="${pair.captainMatch === true}" class="px-2 py-1 rounded-md border text-[10px] font-black ${pair.captainMatch === true ? 'border-amber-400 bg-amber-100 text-amber-900 shadow-sm' : 'border-slate-200 bg-white text-slate-500'}">👑 大将対決 ${pair.captainMatch === true ? 'ON' : 'OFF'}</button>
+                            <button type="button" onclick="window.moveTeamMatchPairing(${index}, -1)" ${index === 0 ? 'disabled' : ''} class="w-7 h-7 rounded-md border border-slate-200 text-slate-600 disabled:opacity-30" aria-label="上へ">↑</button>
+                            <button type="button" onclick="window.moveTeamMatchPairing(${index}, 1)" ${index === teamMatchDraftPairings.length - 1 ? 'disabled' : ''} class="w-7 h-7 rounded-md border border-slate-200 text-slate-600 disabled:opacity-30" aria-label="下へ">↓</button>
+                            <button type="button" onclick="window.removeTeamMatchPairing(${index})" class="px-2 py-1 rounded-md border border-rose-200 text-rose-600 text-[10px] font-bold">削除</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] items-center gap-2">
+                        <select onchange="window.setTeamMatchPairingMember(${index}, 'aId', this.value)" class="min-w-0 w-full border border-slate-300 rounded-lg bg-white p-2 text-xs">${makeOptions(index, 'aId', pair.aId)}</select>
+                        <span class="text-center text-xs font-black text-indigo-700">VS</span>
+                        <select onchange="window.setTeamMatchPairingMember(${index}, 'bId', this.value)" class="min-w-0 w-full border border-slate-300 rounded-lg bg-white p-2 text-xs">${makeOptions(index, 'bId', pair.bId)}</select>
+                    </div>
+                    ${valid ? `<p class="text-[10px] ${pair.captainMatch === true ? 'font-black text-amber-800' : 'text-emerald-700'}">${escapeHtml(memberA.team.name)} vs ${escapeHtml(memberB.team.name)} の対戦カード${pair.captainMatch === true ? ' ／ 👑 大将対決：勝ち点2倍' : ''}</p>` : '<p class="text-[10px] text-amber-700">異なるチームの選手を左右に1名ずつ選択してください。</p>'}
+                </div>`;
+            }).join('');
+
+            box.innerHTML = `<div class="space-y-3">
+                <div><p class="text-xs font-bold text-indigo-900">対戦する選手を1マッチずつ指定</p><p class="mt-1 text-[11px] leading-5 text-indigo-800">左右の選手を選ぶと個人対戦カードが完成します。カード左上の⠿をドラッグするとマッチ順を変更できます。「👑 大将対決」をONにできるのは1マッチのみです。そのマッチは勝ち点配分が2倍（勝ち2点・引き分け1点）になります。1人が複数のマッチに重複しないようにしています。</p></div>
+                <div class="space-y-2" id="team-match-manual-pair-list">${cards || '<p class="rounded-lg border border-dashed border-indigo-200 bg-white p-4 text-center text-xs text-slate-500">対戦カードはまだありません。「＋ マッチを追加」から作成してください。</p>'}</div>
+                <div class="flex flex-wrap items-center justify-between gap-2"><span class="text-[10px] text-slate-500">${teamMatchDraftPairings.length}マッチ登録中 ／ 参加登録済み${assigned.length}名</span><button type="button" onclick="window.addTeamMatchManualPairing()" class="rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 text-xs font-bold">＋ マッチを追加</button></div>
+            </div>`;
+        }
+        window.addTeamMatchManualPairing = () => {
+            teamMatchDraftPairings.push({ aId: '', bId: '', captainMatch: false });
+            renderTeamMatchPairingPicker();
+        };
+        window.toggleTeamMatchCaptainMatch = index => {
+            const pair = teamMatchDraftPairings[index];
+            if (!pair) return;
+            const enable = pair.captainMatch !== true;
+            // 大将対決は大会内で1マッチのみ指定可能。
+            teamMatchDraftPairings.forEach((item, itemIndex) => {
+                if (item && typeof item === 'object') item.captainMatch = enable && itemIndex === index;
+            });
+            renderTeamMatchPairingPicker();
+        };
+        window.removeTeamMatchPairing = index => {
+            teamMatchDraftPairings.splice(index, 1);
+            renderTeamMatchPairingPicker();
+        };
+        window.setTeamMatchPairingMember = (index, side, memberId) => {
+            const pair = teamMatchDraftPairings[index];
+            if (!pair) return;
+            pair[side] = memberId || '';
+            const assigned = new Map(getTeamMatchAssignedMembers().map(member => [member.id, member]));
+            const a = assigned.get(pair.aId), b = assigned.get(pair.bId);
+            if (a && b && a.team.id === b.team.id) {
+                if (side === 'aId') pair.bId = '';
+                else pair.aId = '';
+            }
+            renderTeamMatchPairingPicker();
+        };
+        window.moveTeamMatchPairing = (index, offset) => {
+            const target = index + offset;
+            if (target < 0 || target >= teamMatchDraftPairings.length) return;
+            [teamMatchDraftPairings[index], teamMatchDraftPairings[target]] = [teamMatchDraftPairings[target], teamMatchDraftPairings[index]];
+            renderTeamMatchPairingPicker();
+        };
+        window.startTeamMatchPairingDrag = (index, event) => {
+            teamMatchPairingDragIndex = index;
+            if (event?.dataTransfer) {
+                event.dataTransfer.effectAllowed = 'move';
+                event.dataTransfer.setData('text/plain', String(index));
+            }
+            event?.currentTarget?.classList.add('opacity-50');
+        };
+        window.overTeamMatchPairingDrag = event => {
+            event.preventDefault();
+            if (event?.dataTransfer) event.dataTransfer.dropEffect = 'move';
+        };
+        window.dropTeamMatchPairing = (targetIndex, event) => {
+            event.preventDefault();
+            const sourceIndex = teamMatchPairingDragIndex;
+            if (sourceIndex === null || sourceIndex === targetIndex || sourceIndex < 0 || sourceIndex >= teamMatchDraftPairings.length) return;
+            const [moved] = teamMatchDraftPairings.splice(sourceIndex, 1);
+            teamMatchDraftPairings.splice(targetIndex, 0, moved);
+            teamMatchPairingDragIndex = null;
+            renderTeamMatchPairingPicker();
+        };
+        window.endTeamMatchPairingDrag = () => {
+            teamMatchPairingDragIndex = null;
+            document.querySelectorAll('[data-manual-pair-index]').forEach(card => card.classList.remove('opacity-50'));
+        };
+        document.getElementById('team-match-pairing')?.addEventListener('change', renderTeamMatchPairingPicker);
+        window.updateTeamMatchRuleDescription = updateTeamMatchRuleDescription;
+        document.getElementById('team-match-rule')?.addEventListener('change', updateTeamMatchRuleDescription);
         const TEAM_MATCH_TEAM_NAMES = [
             'Green Team', 'Blue Team', 'Gold Team', 'Purple Team', 'Red Team',
             'Orange Team', 'Navy Team', 'Pink Team', 'Black Team', 'White Team'
@@ -3738,6 +3930,7 @@ Object.keys(statsMap).forEach(id => {
                     id: member.id,
                     name: member.name || '名前未設定',
                     grade: member.grade || '',
+                    division: String(stats?.division || member.division || '3'),
                     rating: stats?.rating ?? 3000,
                     rounds: values.length,
                     best: values.length ? Math.min(...values) : null,
@@ -3760,12 +3953,12 @@ Object.keys(statsMap).forEach(id => {
         function setTeamMatchEditorMode(isEditing) {
             const title = document.getElementById('team-match-modal-title');
             const submit = document.getElementById('btn-submit-team-match');
-            ['team-match-title', 'team-match-date', 'team-match-team-count', 'team-match-rule'].forEach(id => {
+            ['team-match-title', 'team-match-date', 'team-match-team-count', 'team-match-rule', 'team-match-pairing'].forEach(id => {
                 const input = document.getElementById(id);
-                if (input) input.disabled = isEditing;
+                if (input) input.disabled = false;
             });
             if (title) title.innerText = isEditing ? '👥 チーム対抗戦の参加メンバーを編集' : '🏌️ チーム対抗戦を作成';
-            if (submit) submit.innerText = isEditing ? '参加メンバーの変更を保存' : 'チーム戦を作成する';
+            if (submit) submit.innerText = isEditing ? '大会設定・参加者を保存' : 'チーム戦を作成する';
             const info = document.getElementById('team-match-participants-note');
             if (info && isEditing) info.innerText = '部員を追加・解除したり、所属チームを変更できます。開催日後・順位確定後も編集できます。';
         }
@@ -3782,9 +3975,13 @@ Object.keys(statsMap).forEach(id => {
             document.getElementById('team-match-title').value = '';
             document.getElementById('team-match-team-count').value = '2';
             document.getElementById('team-match-rule').value = 'daily_average';
+            document.getElementById('team-match-pairing').value = 'rating';
+            updateTeamMatchRuleDescription();
             document.getElementById('team-match-member-search').value = '';
             teamMatchDraftTeams = createDraftTeams(2);
+            teamMatchDraftPairings = [];
             window.loadTeamMatchParticipants();
+            updateTeamMatchRuleDescription();
             document.getElementById('modal-team-match-create').classList.remove('hidden');
         };
 
@@ -3804,7 +4001,10 @@ Object.keys(statsMap).forEach(id => {
             document.getElementById('team-match-date').value = match.date || '';
             document.getElementById('team-match-team-count').value = String(match.teamCount || (match.teams || []).length || 2);
             document.getElementById('team-match-rule').value = match.ruleMode || 'daily_average';
+            document.getElementById('team-match-pairing').value = match.pairingMode || 'rating';
+            updateTeamMatchRuleDescription();
             document.getElementById('team-match-member-search').value = '';
+            teamMatchDraftPairings = Array.isArray(match.teamPairings) ? [...match.teamPairings] : [];
             teamMatchDraftTeams = (match.teams || []).map((team, index) => ({
                 id: team.id || `match_team_${index + 1}`,
                 name: team.name || TEAM_MATCH_TEAM_NAMES[index] || `Team ${index + 1}`,
@@ -3813,6 +4013,7 @@ Object.keys(statsMap).forEach(id => {
             if (teamMatchDraftTeams.length < 2) teamMatchDraftTeams = createDraftTeams(2);
             setTeamMatchEditorMode(true);
             window.loadTeamMatchParticipants();
+            updateTeamMatchRuleDescription();
             document.getElementById('modal-team-match-create').classList.remove('hidden');
         };
 
@@ -3837,6 +4038,7 @@ Object.keys(statsMap).forEach(id => {
                 if (leastPopulated) leastPopulated.memberIds.push(id);
             });
             renderTeamMatchDraftEditor();
+            renderTeamMatchPairingPicker();
         };
 
         function captureTeamMatchDraftNames() {
@@ -3877,6 +4079,7 @@ Object.keys(statsMap).forEach(id => {
                 const countLabel = document.querySelector(`[data-team-match-team-count-label="${index}"]`);
                 if (countLabel) countLabel.innerText = `${(team.memberIds || []).length}名参加`;
             });
+            renderTeamMatchPairingPicker();
         }
 
         window.toggleTeamMatchParticipant = (memberId, checked) => {
@@ -3912,6 +4115,7 @@ Object.keys(statsMap).forEach(id => {
                 select.innerHTML = options.join('');
                 select.disabled = !teamMatchDraftTeams.some(team => (team.memberIds || []).includes(currentMemberId));
             });
+            renderTeamMatchPairingPicker();
         };
 
         function renderTeamMatchDraftEditor() {
@@ -3988,7 +4192,7 @@ Object.keys(statsMap).forEach(id => {
             const existingNames = teamMatchDraftTeams.map((team, index) => document.querySelector(`[data-team-match-name="${index}"]`)?.value.trim() || team.name);
             const teams = createDraftTeams(count);
             teams.forEach((team, index) => { team.name = existingNames[index] || team.name; });
-            const sorted = [...selectedParticipants].sort((a, b) => b.rating - a.rating);
+            const sorted = [...selectedParticipants].sort(compareTeamMatchDivisionRating);
             sorted.forEach((member, index) => {
                 const round = Math.floor(index / count);
                 const position = index % count;
@@ -3997,7 +4201,7 @@ Object.keys(statsMap).forEach(id => {
             });
             teamMatchDraftTeams = teams;
             renderTeamMatchDraftEditor();
-            window.showToast('選択した部員をレート順に振り分けました。');
+            window.showToast('Division 1 → 2 → 3、各Division内はレート順に振り分けました。');
         };
 
         document.getElementById('form-team-match-create').addEventListener('submit', async (event) => {
@@ -4016,8 +4220,18 @@ Object.keys(statsMap).forEach(id => {
             const title = document.getElementById('team-match-title').value.trim();
             const date = document.getElementById('team-match-date').value;
             const ruleMode = document.getElementById('team-match-rule').value;
+            const pairingMode = document.getElementById('team-match-pairing').value || 'rating';
             const count = teamMatchDraftTeams.length;
-            if (!title || !date || count < 2 || count > 10 || !['daily_average', 'daily_net_average'].includes(ruleMode)) {
+            if (ruleMode === 'individual_match_points' && pairingMode === 'team_pick') {
+                if (!teamMatchDraftPairings.length) { alert('チーム指名制では、少なくとも1組の個人対戦カードを追加してください。'); return; }
+                const assignedTeamByMember = new Map(teamMatchDraftTeams.flatMap(team => (team.memberIds || []).map(id => [id, team.id])));
+                const used = [];
+                const invalid = teamMatchDraftPairings.some(pair => !pair?.aId || !pair?.bId || !assignedTeamByMember.has(pair.aId) || !assignedTeamByMember.has(pair.bId) || assignedTeamByMember.get(pair.aId) === assignedTeamByMember.get(pair.bId));
+                teamMatchDraftPairings.forEach(pair => { if (pair?.aId) used.push(pair.aId); if (pair?.bId) used.push(pair.bId); });
+                if (invalid) { alert('すべてのマッチで、異なるチームの選手を左右に1名ずつ選択してください。'); return; }
+                if (new Set(used).size !== used.length) { alert('同じ選手が複数のマッチに登録されています。各選手は1マッチのみ指定してください。'); return; }
+            }
+            if (!title || !date || count < 2 || count > 10 || !['daily_average', 'daily_net_average', 'individual_rank_points', 'average_improvement_points', 'individual_match_points'].includes(ruleMode) || !['rating', 'random', 'handicap', 'team_pick'].includes(pairingMode)) {
                 alert('大会名・開催日・チーム数・勝敗ルールを確認してください。');
                 return;
             }
@@ -4051,10 +4265,8 @@ Object.keys(statsMap).forEach(id => {
                 if (!assignedSet.has(id)) delete handicapSnapshot[id];
             });
             assigned.forEach(id => {
-                if (!Object.prototype.hasOwnProperty.call(handicapSnapshot, id)) {
-                    const participant = teamMatchDraftParticipants.find(member => member.id === id);
-                    handicapSnapshot[id] = participant?.handicap ?? null;
-                }
+                const participant = teamMatchDraftParticipants.find(member => member.id === id);
+                handicapSnapshot[id] = participant?.handicap ?? null;
             });
 
             const creator = membersData.find(member => member.id === currentUserUid);
@@ -4069,6 +4281,7 @@ Object.keys(statsMap).forEach(id => {
                 let savedMatch;
                 if (isEditing) {
                     const updatePayload = {
+                        title, date, teamCount: count, ruleMode, pairingMode, teamPairings: [...teamMatchDraftPairings],
                         teams,
                         handicapSnapshot,
                         updatedAt: serverTimestamp(),
@@ -4086,7 +4299,7 @@ Object.keys(statsMap).forEach(id => {
                     setTeamMatchEditorMode(false);
                     window.switchTab('team-matches');
                     renderTeamMatchEvents();
-                    window.showToast(`「${title}」の参加メンバーを更新しました`);
+                    window.showToast(`「${title}」の大会設定・参加者を更新しました`);
                 } else {
                     // teamMatches コレクションへの新規ドキュメント作成。
                     const teamMatchPayload = {
@@ -4095,6 +4308,8 @@ Object.keys(statsMap).forEach(id => {
                         teamCount: count,
                         teams,
                         ruleMode,
+                        pairingMode,
+                        teamPairings: [...teamMatchDraftPairings],
                         handicapSnapshot,
                         createdBy: currentUserUid,
                         createdByName: creator?.name || auth.currentUser?.email || 'ログインユーザー',
@@ -4142,7 +4357,7 @@ Object.keys(statsMap).forEach(id => {
             } finally {
                 if (submitButton) {
                     submitButton.disabled = false;
-                    submitButton.innerText = editingTeamMatchId ? '参加メンバーの変更を保存' : (document.getElementById('team-match-modal-title')?.innerText.includes('作成') ? 'チーム戦を作成する' : originalButtonText);
+                    submitButton.innerText = editingTeamMatchId ? '大会設定・参加者を保存' : (document.getElementById('team-match-modal-title')?.innerText.includes('作成') ? 'チーム戦を作成する' : originalButtonText);
                     submitButton.classList.remove('opacity-60', 'cursor-not-allowed');
                 }
             }
@@ -4164,6 +4379,95 @@ Object.keys(statsMap).forEach(id => {
             }
         };
 
+        function getPriorRoundAverage(memberId, beforeDate) {
+            const prior = scoresData.filter(score => score.memberId === memberId && score.date < beforeDate && Number.isFinite(Number(score.totalScore)))
+                .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || ((b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)))
+                .slice(0, 10);
+            if (prior.length < 1) return { average: null, rounds: prior.length };
+            return { average: prior.reduce((sum, score) => sum + Number(score.totalScore), 0) / prior.length, rounds: prior.length };
+        }
+
+        function buildIndividualMatchups(match, teamMemberResults) {
+            const teams = match.teams || [];
+            if (teams.length < 2) return [];
+            const pairingMode = match.pairingMode || 'rating';
+            const savedPairings = Array.isArray(match.teamPairings) ? match.teamPairings : [];
+            // 新しいチーム指名制：teamPairings に {aId, bId} を順番どおり保存。
+            // スコア未登録でも対戦カード自体は画面に表示する。
+            if (pairingMode === 'team_pick' && savedPairings.some(pair => pair && typeof pair === 'object' && pair.aId && pair.bId)) {
+                const memberLookup = new Map();
+                teams.forEach(team => (teamMemberResults.get(team.id) || []).forEach(member => {
+                    memberLookup.set(member.id, { ...member, teamId: team.id, teamName: team.name });
+                }));
+                return savedPairings.map(pair => {
+                    if (!pair || typeof pair !== 'object' || !pair.aId || !pair.bId) return null;
+                    const memberA = memberLookup.get(pair.aId);
+                    const memberB = memberLookup.get(pair.bId);
+                    if (!memberA || !memberB || memberA.teamId === memberB.teamId) return null;
+                    const hasScores = memberA.dailyAverage !== null && memberB.dailyAverage !== null;
+                    const outcome = !hasScores ? 'P' : memberA.dailyAverage < memberB.dailyAverage ? 'A' : memberA.dailyAverage > memberB.dailyAverage ? 'B' : 'D';
+                    const captainMatch = pair.captainMatch === true;
+                    const pointMultiplier = captainMatch ? 2 : 1;
+                    return {
+                        teamAId: memberA.teamId, teamAName: memberA.teamName,
+                        teamBId: memberB.teamId, teamBName: memberB.teamName,
+                        memberA, memberB, outcome, pending: !hasScores, captainMatch, pointMultiplier,
+                        pointsA: (outcome === 'A' ? 1 : outcome === 'D' ? 0.5 : 0) * pointMultiplier,
+                        pointsB: (outcome === 'B' ? 1 : outcome === 'D' ? 0.5 : 0) * pointMultiplier
+                    };
+                }).filter(Boolean);
+            }
+            const teamPairs = [];
+            if (pairingMode === 'team_pick') {
+                // 旧データ互換：従来のチーム同士の指名カードを読み込む。
+                const selected = new Set(savedPairings.filter(pair => typeof pair === 'string'));
+                for (let i = 0; i < teams.length; i++) for (let j = i + 1; j < teams.length; j++) {
+                    const id = `${teams[i].id}__${teams[j].id}`;
+                    if (selected.has(id)) teamPairs.push([teams[i], teams[j]]);
+                }
+            } else {
+                // 複数チームの場合も、各チームの組み合わせごとに個人対決を行う。
+                for (let i = 0; i < teams.length; i++) for (let j = i + 1; j < teams.length; j++) teamPairs.push([teams[i], teams[j]]);
+            }
+            const result = [];
+            teamPairs.forEach(([teamA, teamB]) => {
+                let a = (teamMemberResults.get(teamA.id) || []).filter(item => item.dailyAverage !== null);
+                let b = (teamMemberResults.get(teamB.id) || []).filter(item => item.dailyAverage !== null);
+                const sortByRating = compareTeamMatchDivisionRating;
+                const sortByHdcp = (x, y) => (x.handicap ?? 999) - (y.handicap ?? 999);
+                if (pairingMode === 'random') {
+                    const stableShuffle = list => [...list].sort((x, y) => { const hash = value => Array.from(String(value)).reduce((acc, ch) => (acc * 31 + ch.charCodeAt(0)) >>> 0, 7); return hash(x.id) - hash(y.id); });
+                    a = stableShuffle(a); b = stableShuffle(b);
+                } else if (pairingMode === 'handicap') {
+                    a = [...a].sort(sortByHdcp); b = [...b].sort(sortByHdcp);
+                } else {
+                    a = [...a].sort(sortByRating); b = [...b].sort(sortByRating);
+                }
+                const usedB = new Set();
+                a.forEach((memberA, index) => {
+                    let opponentIndex = index;
+                    if (pairingMode === 'handicap' && b.length) {
+                        let bestGap = Infinity;
+                        b.forEach((candidate, candidateIndex) => {
+                            if (usedB.has(candidateIndex)) return;
+                            const gap = Math.abs((memberA.handicap ?? 999) - (candidate.handicap ?? 999));
+                            if (gap < bestGap) { bestGap = gap; opponentIndex = candidateIndex; }
+                        });
+                    }
+                    if (pairingMode === 'random' && b.length) {
+                        const available = b.map((_, i) => i).filter(i => !usedB.has(i));
+                        opponentIndex = available.length ? available[Math.floor(Math.random() * available.length)] : -1;
+                    }
+                    const memberB = b[opponentIndex];
+                    if (!memberB || usedB.has(opponentIndex)) return;
+                    usedB.add(opponentIndex);
+                    const outcome = memberA.dailyAverage < memberB.dailyAverage ? 'A' : memberA.dailyAverage > memberB.dailyAverage ? 'B' : 'D';
+                    result.push({ teamAId: teamA.id, teamAName: teamA.name, teamBId: teamB.id, teamBName: teamB.name, memberA, memberB, outcome, pointsA: outcome === 'A' ? 1 : outcome === 'D' ? 0.5 : 0, pointsB: outcome === 'B' ? 1 : outcome === 'D' ? 0.5 : 0 });
+                });
+            });
+            return result;
+        }
+
         function calculateTeamMatchStandings(match) {
             const dailyScores = scoresData.filter(score => score.date === match.date && Number.isFinite(Number(score.totalScore)));
             const byMember = new Map();
@@ -4174,6 +4478,7 @@ Object.keys(statsMap).forEach(id => {
             const { processedMembers } = calculateEloAndStats((systemSettings.currentSeason || 1).toString(), 'all');
             const statsById = new Map(processedMembers.map(member => [member.id, member]));
             const usesHandicap = match.ruleMode === 'daily_net_average';
+            const teamMemberResults = new Map();
             const teams = (match.teams || []).map((team, index) => {
                 const memberResults = (team.memberIds || []).map(id => {
                     const values = byMember.get(id) || [];
@@ -4181,46 +4486,76 @@ Object.keys(statsMap).forEach(id => {
                     const dailyAverage = values.length ? values.reduce((sum, item) => sum + item, 0) / values.length : null;
                     const dailyBest = values.length ? Math.min(...values) : null;
                     const dailyTotal = values.length ? values.reduce((sum, item) => sum + item, 0) : null;
-                    let handicap = null;
-                    const savedHandicap = match.handicapSnapshot?.[id];
-                    if (savedHandicap !== null && savedHandicap !== undefined && Number.isFinite(Number(savedHandicap))) {
-                        handicap = Number(savedHandicap);
-                    } else {
-                        // 作成時に未確定だったHDCPは、後日確定した時点で利用可能にする。
-                        const currentHandicap = Number.parseFloat(statsById.get(id)?.hdcp);
-                        handicap = Number.isFinite(currentHandicap) ? currentHandicap : null;
-                    }
+                    const stats = statsById.get(id);
+                    const handicapValue = Number.parseFloat(stats?.hdcp);
+                    const handicap = Number.isFinite(handicapValue) ? handicapValue : null;
+                    const prior = getPriorRoundAverage(id, match.date);
                     let value = dailyAverage;
-                    if (dailyAverage === null) value = null;
-                    else if (usesHandicap) value = handicap === null ? null : dailyAverage - handicap;
+                    let points = null;
+                    let missingReason = dailyAverage === null ? 'スコア待ち' : '';
+                    if (usesHandicap) { value = dailyAverage === null || handicap === null ? null : dailyAverage - handicap; if (handicap === null && dailyAverage !== null) missingReason = 'HDCP未確定（3R未満）'; }
                     else if (match.ruleMode === 'member_best_average') value = dailyBest;
                     else if (match.ruleMode === 'total_strokes') value = dailyTotal;
-                    return {
-                        id,
-                        name: member?.name || '退部・未登録部員',
-                        rounds: values.length,
-                        dailyAverage,
-                        dailyBest,
-                        dailyTotal,
-                        handicap,
-                        value,
-                        missingReason: dailyAverage === null ? 'スコア待ち' : (usesHandicap && handicap === null ? 'HDCP未確定' : '')
-                    };
+                    else if (match.ruleMode === 'average_improvement_points') {
+                        value = dailyAverage === null || prior.average === null ? null : Math.max(0, prior.average - dailyAverage);
+                        points = value;
+                        if (dailyAverage !== null && prior.average === null) missingReason = `過去スコア不足（${prior.rounds}/1R）`;
+                    }
+                    return { id, name: member?.name || '退部・未登録部員', rounds: values.length, dailyAverage, dailyBest, dailyTotal, handicap, value, points, priorAverage: prior.average, priorRounds: prior.rounds, division: String(stats?.division || member?.division || '3'), rating: stats?.rating ?? 3000, missingReason };
                 });
-                const active = memberResults.filter(item => item.value !== null);
-                const score = active.length
-                    ? (match.ruleMode === 'total_strokes'
-                        ? active.reduce((sum, item) => sum + item.value, 0)
-                        : active.reduce((sum, item) => sum + item.value, 0) / active.length)
-                    : null;
-                const complete = memberResults.length > 0 && memberResults.every(item => item.value !== null);
-                return { ...team, index, score, activeCount: active.length, memberResults, complete };
+                teamMemberResults.set(team.id, memberResults);
+                return { ...team, index, score: null, activeCount: memberResults.filter(item => item.dailyAverage !== null).length, memberResults, complete: memberResults.length > 0 && memberResults.every(item => item.dailyAverage !== null) };
             });
+
+            let matchups = [];
+            if (match.ruleMode === 'individual_rank_points') {
+                const all = teams.flatMap(team => team.memberResults.map(member => ({ ...member, teamId: team.id, teamName: team.name })));
+                const rankedPlayers = [...all].filter(member => member.dailyAverage !== null).sort((a, b) => a.dailyAverage - b.dailyAverage);
+                let previousAverage = null;
+                let previousPoints = null;
+                rankedPlayers.forEach((member, index) => {
+                    if (previousAverage !== null && Math.abs(member.dailyAverage - previousAverage) < 0.000001) {
+                        member.points = previousPoints;
+                    } else {
+                        member.points = rankedPlayers.length - index;
+                        previousAverage = member.dailyAverage;
+                        previousPoints = member.points;
+                    }
+                });
+                teams.forEach(team => {
+                    const players = rankedPlayers.filter(player => player.teamId === team.id);
+                    team.score = players.reduce((sum, player) => sum + player.points, 0);
+                    team.memberResults.forEach(member => { const found = players.find(player => player.id === member.id); member.points = found?.points ?? null; member.value = found?.points ?? null; });
+                    team.complete = team.memberResults.length > 0 && team.memberResults.every(member => member.points !== null);
+                });
+            } else if (match.ruleMode === 'individual_match_points') {
+                matchups = buildIndividualMatchups(match, teamMemberResults);
+                teams.forEach(team => {
+                    const involved = matchups.filter(item => item.teamAId === team.id || item.teamBId === team.id);
+                    const settled = involved.filter(item => !item.pending);
+                    const total = settled.reduce((sum, item) => sum + (item.teamAId === team.id ? item.pointsA : item.pointsB), 0);
+                    team.score = settled.length ? total : null;
+                    team.memberResults.forEach(member => {
+                        const matches = matchups.filter(item => item.memberA.id === member.id || item.memberB.id === member.id);
+                        member.points = matches.reduce((sum, item) => sum + (item.memberA.id === member.id ? item.pointsA : item.pointsB), 0);
+                        member.value = member.points;
+                    });
+                    team.complete = team.memberResults.length > 0 && team.memberResults.every(member => member.dailyAverage !== null) && team.memberResults.every(member => member.points !== null);
+                });
+            } else {
+                teams.forEach(team => {
+                    const active = team.memberResults.filter(item => item.value !== null);
+                    team.score = active.length ? (match.ruleMode === 'total_strokes' ? active.reduce((sum, item) => sum + item.value, 0) : match.ruleMode === 'average_improvement_points' ? active.reduce((sum, item) => sum + item.value, 0) : active.reduce((sum, item) => sum + item.value, 0) / active.length) : null;
+                    team.complete = team.memberResults.length > 0 && team.memberResults.every(item => item.value !== null);
+                });
+            }
+
+            const pointsMode = ['individual_rank_points', 'average_improvement_points', 'individual_match_points'].includes(match.ruleMode);
             const ranked = [...teams].sort((a, b) => {
                 if (a.score === null && b.score === null) return a.index - b.index;
                 if (a.score === null) return 1;
                 if (b.score === null) return -1;
-                return a.score - b.score;
+                return pointsMode ? b.score - a.score : a.score - b.score;
             });
             let previousScore = null, previousRank = 0;
             ranked.forEach((team, index) => {
@@ -4229,7 +4564,7 @@ Object.keys(statsMap).forEach(id => {
                 else { team.rank = index + 1; previousRank = team.rank; previousScore = team.score; }
             });
             const isFinal = ranked.length > 0 && ranked.every(team => team.complete);
-            return { ranked, isFinal, usesHandicap };
+            return { ranked, isFinal, usesHandicap, matchups, pointsMode };
         }
 
         function getTeamVictoryBadgeHTML() {
@@ -4268,9 +4603,9 @@ Object.keys(statsMap).forEach(id => {
                 return;
             }
             container.innerHTML = teamMatchesData.map(match => {
-                const { ranked: standings, isFinal, usesHandicap } = calculateTeamMatchStandings(match);
+                const { ranked: standings, isFinal, usesHandicap, matchups, pointsMode } = calculateTeamMatchStandings(match);
                 const ruleLabel = TEAM_MATCH_RULES[match.ruleMode] || '旧ルールのスコア集計';
-                const scoreLabel = usesHandicap ? 'ネット平均' : (match.ruleMode === 'daily_average' ? '当日平均' : (match.ruleMode === 'member_best_average' ? '当日ベスト平均' : (match.ruleMode === 'member_average' ? '当日平均' : (match.ruleMode === 'total_strokes' ? '合計打数' : 'チーム平均'))));
+                const scoreLabel = pointsMode ? (match.ruleMode === 'individual_match_points' ? '勝ち点' : '獲得ポイント') : (usesHandicap ? 'ネット平均' : (match.ruleMode === 'daily_average' ? '当日平均' : (match.ruleMode === 'member_best_average' ? '当日ベスト平均' : (match.ruleMode === 'total_strokes' ? '合計打数' : 'チーム平均'))));
                 const winners = isFinal ? standings.filter(team => team.rank === 1) : [];
                 const rankTableRows = standings.map((team, index) => {
                     const medal = team.rank === 1 ? '🥇' : team.rank === 2 ? '🥈' : team.rank === 3 ? '🥉' : `${team.rank}位`;
@@ -4278,7 +4613,7 @@ Object.keys(statsMap).forEach(id => {
                     return `<tr class="${isWinner ? 'bg-amber-50' : 'bg-white'} border-b border-slate-100">
                         <td class="px-3 py-3 text-center font-black text-sm whitespace-nowrap">${team.rank === '--' ? '－' : medal}</td>
                         <td class="px-3 py-3 min-w-0"><div class="flex flex-wrap items-center gap-2"><span class="font-bold text-sm text-slate-800">${escapeHtml(team.name || `Team ${index + 1}`)}</span>${isWinner ? getTeamVictoryBadgeHTML() : ''}</div><span class="block text-[10px] text-slate-400 mt-0.5">${team.activeCount}/${team.memberResults.length}名の集計完了</span></td>
-                        <td class="px-3 py-3 text-right"><span class="text-lg font-black tabular-nums ${team.score === null ? 'text-slate-300' : (isWinner ? 'text-amber-700' : 'text-emerald-700')}">${team.score === null ? '--' : team.score.toFixed(1)}</span><span class="block text-[9px] text-slate-400">${scoreLabel}</span></td>
+                        <td class="px-3 py-3 text-right"><span class="text-lg font-black tabular-nums ${team.score === null ? 'text-slate-300' : (isWinner ? 'text-amber-700' : 'text-emerald-700')}">${team.score === null ? '--' : team.score.toFixed(pointsMode ? 1 : 1)}</span><span class="block text-[9px] text-slate-400">${scoreLabel}</span></td>
                     </tr>`;
                 }).join('');
                 const teamDetails = standings.map((team, index) => {
@@ -4293,6 +4628,9 @@ Object.keys(statsMap).forEach(id => {
                                 let resultLabel = member.missingReason || '';
                                 if (!resultLabel && member.dailyAverage !== null) {
                                     if (usesHandicap) resultLabel = `${member.dailyAverage.toFixed(1)} − ${member.handicap.toFixed(1)} = ${member.value.toFixed(1)}`;
+                                    else if (match.ruleMode === 'individual_rank_points') resultLabel = `獲得 ${member.points ?? '--'} pt（当日平均 ${member.dailyAverage.toFixed(1)}）`;
+                                    else if (match.ruleMode === 'average_improvement_points') resultLabel = member.priorAverage === null ? `過去平均未確定（${member.priorRounds}/1R）` : `過去平均 ${member.priorAverage.toFixed(1)} → 当日 ${member.dailyAverage.toFixed(1)} ／ ${member.points.toFixed(1)} pt`;
+                                    else if (match.ruleMode === 'individual_match_points') resultLabel = `個人勝ち点 ${member.points?.toFixed(1) ?? '0.0'} pt（当日 ${member.dailyAverage.toFixed(1)}）`;
                                     else if (match.ruleMode === 'member_best_average') resultLabel = `ベスト ${member.dailyBest.toFixed(1)}打`;
                                     else if (match.ruleMode === 'total_strokes') resultLabel = `合計 ${member.dailyTotal.toFixed(1)}打`;
                                     else resultLabel = `${member.dailyAverage.toFixed(1)}打`;
@@ -4305,12 +4643,15 @@ Object.keys(statsMap).forEach(id => {
                 const statusLabel = isFinal ? '順位確定' : (usesHandicap ? '暫定順位：スコアまたはHDCPの登録待ち' : '暫定順位：スコア登録待ち');
                 return `<article class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
                     <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-                        <div class="min-w-0"><h4 class="font-bold text-sm text-slate-800">${escapeHtml(match.title || 'チーム対抗戦')}</h4><p class="text-[10px] text-slate-500 mt-1">開催日：${escapeHtml(match.date || '--')} ／ 作成：${escapeHtml(match.createdByName || '部員')}</p></div>
-                        <div class="flex flex-wrap items-center gap-2"><span class="text-[10px] rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 px-2.5 py-1">${escapeHtml(ruleLabel)}</span><span class="text-[10px] rounded-full ${isFinal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} px-2.5 py-1 font-bold">${statusLabel}</span>${currentUserUid ? `<button type="button" onclick="window.editTeamMatchParticipants('${escapeHtml(match.id)}')" class="text-[10px] font-bold text-emerald-700 border border-emerald-200 hover:bg-emerald-50 rounded-lg px-2.5 py-1.5">参加者を編集</button><button type="button" onclick="window.deleteTeamMatch('${escapeHtml(match.id)}')" class="text-[10px] font-bold text-rose-600 border border-rose-200 hover:bg-rose-50 rounded-lg px-2.5 py-1.5">削除</button>` : ''}</div>
+                        <div class="min-w-0"><h4 class="font-bold text-sm text-slate-800">${escapeHtml(match.title || 'チーム対抗戦')}</h4><p class="text-[10px] text-slate-500 mt-1">開催日：${escapeHtml(match.date || '--')} ／ ${Number(match.teamCount || (match.teams || []).length)}チーム ／ 作成：${escapeHtml(match.createdByName || '部員')}</p></div>
+                        <div class="flex flex-wrap items-center gap-2"><span class="text-[10px] rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 px-2.5 py-1">${escapeHtml(ruleLabel)}</span><span class="text-[10px] rounded-full ${isFinal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} px-2.5 py-1 font-bold">${statusLabel}</span>${currentUserUid ? `<button type="button" onclick="window.editTeamMatchParticipants('${escapeHtml(match.id)}')" class="text-[10px] font-bold text-emerald-700 border border-emerald-200 hover:bg-emerald-50 rounded-lg px-2.5 py-1.5">大会設定・参加者を編集</button><button type="button" onclick="window.deleteTeamMatch('${escapeHtml(match.id)}')" class="text-[10px] font-bold text-rose-600 border border-rose-200 hover:bg-rose-50 rounded-lg px-2.5 py-1.5">削除</button>` : ''}</div>
                     </div>
                     <div class="p-3 sm:p-4 space-y-3">
+                        <details class="rounded-xl border border-emerald-200 bg-emerald-50/50 p-3"><summary class="cursor-pointer text-xs font-black text-emerald-900">📖 勝敗ルール・詳しい説明を見る</summary><p class="mt-2 text-xs leading-6 text-emerald-950">${escapeHtml(TEAM_MATCH_RULE_DESCRIPTIONS[match.ruleMode] || '開催日のスコアをもとに順位を集計します。')}</p>${match.ruleMode === 'individual_match_points' ? `<p class="mt-1 text-[11px] text-emerald-800">対戦方法：${escapeHtml(({rating:'レート順（Division優先）',random:'ランダム',handicap:'ハンディキャップ順',team_pick:'チーム指名制・個人対戦カード指定'})[match.pairingMode || 'rating'] || 'レート順')} ／ 通常は勝ち1点・引き分け0.5点・負け0点、大将対決は勝ち2点・引き分け1点</p>` : ''}</details>
                         <div><h5 class="text-xs font-black text-slate-700 mb-2">🏆 チーム順位</h5><div class="overflow-x-auto rounded-xl border border-slate-200"><table class="w-full text-left"><thead class="bg-slate-100 text-[10px] text-slate-500"><tr><th class="px-3 py-2 text-center">順位</th><th class="px-3 py-2">チーム</th><th class="px-3 py-2 text-right">${scoreLabel}</th></tr></thead><tbody>${rankTableRows}</tbody></table></div></div>
                         <div><h5 class="text-xs font-black text-slate-700 mb-2">参加メンバー別スコア</h5><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">${teamDetails}</div></div>
+
+                        ${match.ruleMode === 'individual_match_points' ? `<div class="rounded-xl border border-indigo-200 bg-indigo-50/40 p-3"><h5 class="text-xs font-black text-indigo-900 mb-2">⚔️ 個人マッチ対決一覧</h5><p class="text-[10px] text-indigo-700 mb-2">通常マッチ：勝ち1点・引き分け0.5点 ／ 大将対決：勝ち2点・引き分け1点</p>${matchups.length ? matchups.map((pair, pairIndex) => `<div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2 py-3 border-b border-indigo-100 last:border-0"><div class="min-w-0"><b class="block truncate text-xs"><span class="text-indigo-700">マッチ ${pairIndex + 1}</span>　${escapeHtml(pair.teamAName)}：${escapeHtml(pair.memberA.name)}</b><span class="block mt-1 ${pair.memberA.dailyAverage === null ? 'text-xs text-slate-500' : 'text-xl sm:text-2xl font-black text-slate-900 tabular-nums'}">${pair.memberA.dailyAverage === null ? 'スコア待ち' : `${pair.memberA.dailyAverage.toFixed(1)}<span class="text-xs font-bold ml-0.5">打</span>`}</span></div><div class="text-center min-w-[88px]"><span class="inline-block rounded-full px-2 py-0.5 mb-1 text-[9px] font-black ${pair.captainMatch ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-slate-100 text-slate-600'}">${pair.captainMatch ? '👑 大将対決 ×2' : '通常マッチ'}</span><div class="text-sm sm:text-base font-black text-indigo-900 whitespace-nowrap">${pair.pending ? '結果待ち' : pair.outcome === 'A' ? 'Win - Lose' : pair.outcome === 'B' ? 'Lose - Win' : 'Draw'}</div><span class="block text-lg sm:text-xl font-black text-indigo-900 tabular-nums mt-1">${pair.pending ? '－' : `${pair.pointsA.toFixed(1)} - ${pair.pointsB.toFixed(1)}`}</span><span class="block text-[9px] font-bold text-slate-500">勝ち点</span></div><div class="min-w-0 text-right"><b class="block truncate text-xs">${escapeHtml(pair.teamBName)}：${escapeHtml(pair.memberB.name)}</b><span class="block mt-1 ${pair.memberB.dailyAverage === null ? 'text-xs text-slate-500' : 'text-xl sm:text-2xl font-black text-slate-900 tabular-nums'}">${pair.memberB.dailyAverage === null ? 'スコア待ち' : `${pair.memberB.dailyAverage.toFixed(1)}<span class="text-xs font-bold ml-0.5">打</span>`}</span></div></div>`).join('') : '<p class="text-xs text-slate-500">個人対戦カードが未設定、または対象の対戦カードに有効な部員がいません。</p>'}</div>` : ''}
                         ${winners.length ? `<div class="rounded-xl border border-amber-300 p-3 text-center" style="background:linear-gradient(135deg,#fffbeb,#fef3c7,#fff7ed)"><div class="text-xs font-black tracking-[.2em] text-amber-800">✦ TOURNAMENT CHAMPION ✦</div><div class="flex flex-wrap items-center justify-center gap-2 mt-2">${winners.map(team => `<span class="text-sm font-black text-amber-950">${escapeHtml(team.name)}</span>`).join('<span class="text-amber-700">／</span>')}</div><div class="mt-2">${getTeamVictoryBadgeHTML()}</div></div>` : ''}
                     </div>
                 </article>`;
