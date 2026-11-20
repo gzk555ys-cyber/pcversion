@@ -4214,6 +4214,30 @@ Object.keys(statsMap).forEach(id => {
             window.showToast('Division 1 → 2 → 3、各Division内はレート順に振り分けました。');
         };
 
+        // ランダム対戦カードは大会設定の保存時にだけ抽選し、Firestore に保存する。
+        // スコアの有無に依存させないため、未提出の参加者も抽選対象とする。
+        function drawTeamMatchRandomPairings(teams) {
+            const shuffle = ids => {
+                const shuffled = [...ids];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                return shuffled;
+            };
+            const pairings = [];
+            for (let i = 0; i < teams.length; i++) {
+                for (let j = i + 1; j < teams.length; j++) {
+                    const left = shuffle(teams[i].memberIds || []);
+                    const right = shuffle(teams[j].memberIds || []);
+                    for (let k = 0; k < Math.min(left.length, right.length); k++) {
+                        pairings.push({ teamAId: teams[i].id, teamBId: teams[j].id, aId: left[k], bId: right[k] });
+                    }
+                }
+            }
+            return pairings;
+        }
+
         document.getElementById('form-team-match-create').addEventListener('submit', async (event) => {
             event.preventDefault();
             if (!currentUserUid || !auth.currentUser) {
@@ -4250,6 +4274,9 @@ Object.keys(statsMap).forEach(id => {
                 name: (document.querySelector(`[data-team-match-name="${index}"]`)?.value || team.name || `Team ${index + 1}`).trim(),
                 memberIds: [...(team.memberIds || [])]
             }));
+            // 「大会設定・参加者を保存」のたびにランダム形式なら再抽選する。
+            const randomPairings = ruleMode === 'individual_match_points' && pairingMode === 'random'
+                ? drawTeamMatchRandomPairings(teams) : [];
             const assigned = teams.flatMap(team => team.memberIds);
             // 新規作成時は各チーム1名以上を必須にする。既存大会の編集では、
             // 一旦チームを空にしてメンバーを入れ替える操作も許可する。
@@ -4291,7 +4318,7 @@ Object.keys(statsMap).forEach(id => {
                 let savedMatch;
                 if (isEditing) {
                     const updatePayload = {
-                        title, date, teamCount: count, ruleMode, pairingMode, teamPairings: [...teamMatchDraftPairings],
+                        title, date, teamCount: count, ruleMode, pairingMode, teamPairings: [...teamMatchDraftPairings], randomPairings,
                         teams,
                         handicapSnapshot,
                         updatedAt: serverTimestamp(),
@@ -4320,6 +4347,7 @@ Object.keys(statsMap).forEach(id => {
                         ruleMode,
                         pairingMode,
                         teamPairings: [...teamMatchDraftPairings],
+                        randomPairings,
                         handicapSnapshot,
                         createdBy: currentUserUid,
                         createdByName: creator?.name || auth.currentUser?.email || 'ログインユーザー',
@@ -4402,6 +4430,43 @@ Object.keys(statsMap).forEach(id => {
             if (teams.length < 2) return [];
             const pairingMode = match.pairingMode || 'rating';
             const savedPairings = Array.isArray(match.teamPairings) ? match.teamPairings : [];
+            if (pairingMode === 'random') {
+                const savedRandom = Array.isArray(match.randomPairings) ? match.randomPairings : [];
+                // 旧大会には保存済みカードがないため、再抽選せず固定順で表示する。
+                // 編集画面で保存すると新しいランダムカードがFirestoreに保存される。
+                const cards = savedRandom.length ? savedRandom : (() => {
+                    const fallback = [];
+                    for (let i = 0; i < teams.length; i++) for (let j = i + 1; j < teams.length; j++) {
+                        const left = [...(teams[i].memberIds || [])].sort();
+                        const right = [...(teams[j].memberIds || [])].sort();
+                        for (let k = 0; k < Math.min(left.length, right.length); k++)
+                            fallback.push({ teamAId: teams[i].id, teamBId: teams[j].id, aId: left[k], bId: right[k] });
+                    }
+                    return fallback;
+                })();
+                const lookup = new Map();
+                teams.forEach(team => (teamMemberResults.get(team.id) || []).forEach(member =>
+                    lookup.set(`${team.id}:${member.id}`, member)));
+                return cards.map(pair => {
+                    const memberA = lookup.get(`${pair.teamAId}:${pair.aId}`);
+                    const memberB = lookup.get(`${pair.teamBId}:${pair.bId}`);
+                    if (!memberA || !memberB || pair.teamAId === pair.teamBId) return null;
+                    const teamA = teams.find(team => team.id === pair.teamAId);
+                    const teamB = teams.find(team => team.id === pair.teamBId);
+                    if (!teamA || !teamB) return null;
+                    const pending = memberA.dailyAverage === null || memberB.dailyAverage === null;
+                    const outcome = pending ? 'P' : memberA.dailyAverage < memberB.dailyAverage ? 'A'
+                        : memberA.dailyAverage > memberB.dailyAverage ? 'B' : 'D';
+                    return {
+                        teamAId: teamA.id, teamAName: teamA.name,
+                        teamBId: teamB.id, teamBName: teamB.name,
+                        memberA, memberB, outcome, pending,
+                        pointsA: outcome === 'A' ? 1 : outcome === 'D' ? 0.5 : 0,
+                        pointsB: outcome === 'B' ? 1 : outcome === 'D' ? 0.5 : 0
+                    };
+                }).filter(Boolean);
+            }
+
             // 新しいチーム指名制：teamPairings に {aId, bId} を順番どおり保存。
             // スコア未登録でも対戦カード自体は画面に表示する。
             if (pairingMode === 'team_pick' && savedPairings.some(pair => pair && typeof pair === 'object' && pair.aId && pair.bId)) {
