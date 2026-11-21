@@ -491,6 +491,13 @@
                 </div>
             </div>
             <p id="team-match-login-note" class="text-xs text-slate-500 bg-slate-50 rounded-lg p-3">チーム戦の作成・削除にはログインが必要です。閲覧はログインなしでもできます。</p>
+            <div class="flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
+                <label for="team-match-month-filter" class="text-xs font-bold text-slate-700 whitespace-nowrap">開催月で絞り込み</label>
+                <select id="team-match-month-filter" onchange="window.filterTeamMatchesByMonth()" class="min-w-[170px] max-w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" aria-label="チーム対抗戦の開催月を選択">
+                    <option value="all">全期間</option>
+                </select>
+                <span id="team-match-filter-count" class="text-xs text-slate-500" aria-live="polite"></span>
+            </div>
             <div id="team-match-events-container" class="space-y-4"></div>
         </section>
 
@@ -4989,6 +4996,8 @@ Object.keys(statsMap).forEach(id => {
             }
         };
 
+        window.filterTeamMatchesByMonth = () => renderTeamMatchEvents();
+
         function renderTeamMatchEvents() {
             const container = document.getElementById('team-match-events-container');
             if (!container) return;
@@ -4996,11 +5005,27 @@ Object.keys(statsMap).forEach(id => {
             const loginNote = document.getElementById('team-match-login-note');
             if (createButton) createButton.classList.toggle('hidden', !currentUserUid);
             if (loginNote) loginNote.classList.toggle('hidden', !!currentUserUid);
+            const monthFilter = document.getElementById('team-match-month-filter');
+            const monthKeys = [...new Set(teamMatchesData.map(match => String(match.date || '').slice(0, 7)).filter(month => /^\d{4}-(0[1-9]|1[0-2])$/.test(month)))].sort().reverse();
+            const previousSelection = monthFilter?.value || 'all';
+            if (monthFilter) {
+                const nextOptions = ['<option value="all">全期間</option>', ...monthKeys.map(month => `<option value="${month}">${month.slice(0, 4)}年${Number(month.slice(5, 7))}月</option>`)].join('');
+                if (monthFilter.innerHTML !== nextOptions) monthFilter.innerHTML = nextOptions;
+                monthFilter.value = monthKeys.includes(previousSelection) ? previousSelection : 'all';
+            }
+            const selectedMonth = monthFilter?.value || 'all';
+            const visibleMatches = selectedMonth === 'all' ? teamMatchesData : teamMatchesData.filter(match => String(match.date || '').startsWith(selectedMonth + '-'));
+            const countLabel = document.getElementById('team-match-filter-count');
+            if (countLabel) countLabel.textContent = `${visibleMatches.length}件の大会`;
             if (!teamMatchesData.length) {
                 container.innerHTML = '<div class="text-center text-sm text-slate-400 py-8 bg-slate-50 rounded-xl">まだチーム戦がありません。「チーム戦を作成」から大会を作れます。</div>';
                 return;
             }
-            container.innerHTML = teamMatchesData.map(match => {
+            if (!visibleMatches.length) {
+                container.innerHTML = '<div class="text-center text-sm text-slate-500 py-8 bg-slate-50 rounded-xl">選択した月に開催されたチーム対抗戦はありません。</div>';
+                return;
+            }
+            container.innerHTML = visibleMatches.map(match => {
                 const { ranked: standings, isFinal, usesHandicap, matchups, pointsMode } = calculateTeamMatchStandings(match);
                 const ruleLabel = TEAM_MATCH_RULES[match.ruleMode] || '旧ルールのスコア集計';
                 const scoreLabel = pointsMode ? (match.ruleMode === 'individual_match_points' ? '勝ち点' : '獲得ポイント') : (usesHandicap ? 'ネット平均' : (match.ruleMode === 'daily_average' ? '当日平均' : (match.ruleMode === 'member_best_average' ? '当日ベスト平均' : (match.ruleMode === 'total_strokes' ? '合計打数' : 'チーム平均'))));
